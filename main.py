@@ -1,63 +1,8 @@
 from typing import List, Dict, Tuple
 import random
-import csv
+import os
 from clases import Curso, Docente, Salon, Asignacion, RelacionDocenteCurso
-
-
-class CargadorDatos:
-    def cargar_docentes(path: str) -> List[Docente]:
-        docentes = []
-        with open(path, newline='', encoding='utf-8') as f:
-            reader = csv.DictReader(f)
-            for row in reader:
-                docente = Docente(
-                    registro=row['registro'],
-                    nombre=row['nombre'],
-                    hora_entrada=row['hora_entrada'],
-                    hora_salida=row['hora_salida']
-                )
-                docentes.append(docente)
-        return docentes
-
-    def cargar_cursos(path: str) -> List[Curso]:
-        cursos = []
-        with open(path, newline='', encoding='utf-8') as f:
-            reader = csv.DictReader(f)
-            for row in reader:
-                curso = Curso(
-                    codigo=row['codigo'],
-                    nombre=row['nombre'],
-                    carrera=row['carrera'],
-                    semestre=row['semestre'],
-                    seccion=row['seccion'],
-                    tipo=row['tipo']
-                )
-                cursos.append(curso)
-        return cursos
-    
-    def cargar_relaciones(path: str) -> RelacionDocenteCurso:
-        relaciones = RelacionDocenteCurso()
-        with open(path, newline='', encoding='utf-8') as f:
-            reader = csv.DictReader(f)
-            for row in reader:
-                relaciones.agregar(row['registro'], row['codigo_curso'])
-        return relaciones
-    
-    def cargar_salones():
-        return [Salon("101", "Salon 1"),
-                Salon("102", "Salon 2"),
-                Salon("103", "Salon 3"),
-                Salon("104", "Salon 4"),
-                Salon("105", "Salon 5"),
-                Salon("106", "Salon 6"),
-                Salon("107", "Salon 7"),
-                Salon("108", "Salon 8"),
-                Salon("109", "Salon 9"),
-                Salon("110", "Salon 10"),
-                Salon("111", "Salon 11")
-                ]
-
-
+from carga import CargadorDatos
 
 
 class Horario:
@@ -149,9 +94,8 @@ class AlgoritmoGenetico:
             self.poblacion.append(Horario(asignaciones))
 
     def generar_horario_aleatorio(self):
-        # Horarios entre 13:40 y 21:10
         horarios = ["13:40", "14:30", "15:20", "16:10",
-                    "17:00", "17:50", "18:40", "19:30", "20:20"]
+                    "17:00", "17:50", "18:40", "19:30", "20:20", "21:10"]
         return random.choice(horarios)
 
     def evolucionar(self):
@@ -188,3 +132,24 @@ class AlgoritmoGenetico:
         asignacion = random.choice(individuo.asignaciones)
         # mutar horario o salón o docente
         asignacion.horario = self.generar_horario_aleatorio()
+
+
+def main():
+    # Carga de archivos CSV
+    base_path = "data"
+    path_docentes = os.path.join(base_path, "docentes.csv")
+    path_cursos = os.path.join(base_path, "cursos.csv")
+    path_relaciones = os.path.join(base_path, "docente_curso.csv")
+    path_salones = os.path.join(base_path, "salones.csv")
+
+    docentes = CargadorDatos.cargar_docentes(path_docentes)
+    cursos = CargadorDatos.cargar_cursos(path_cursos)
+    relaciones = CargadorDatos.cargar_relaciones(path_relaciones)
+    salones = CargadorDatos.cargar_salones(path_salones)
+
+    # Visualizar los datos cargados
+    print("Docentes:", docentes)
+
+
+if __name__ == "__main__":
+    main()
