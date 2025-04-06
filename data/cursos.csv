@@ -1,0 +1,301 @@
+nombre,codigo,carrera,semestre,seccion,tipo
+Sistemas Operativos,19723,Ingenieria Civil,5,F,opcional
+Ingeniería de Software II,23149,Ingenieria Mecanica,7,A,obligatorio
+Circuitos Eléctricos,26492,Ingenieria en Sistemas,10,D,opcional
+Resistencia de Materiales,31861,Ingenieria en Sistemas,7,E,obligatorio
+Robótica,53844,Ingenieria Mecanica,4,B,obligatorio
+Termodinámica,19361,Ingenieria Industrial,5,B,obligatorio
+Bases de Datos I,12500,Ingenieria Industrial,4,A,obligatorio
+Termodinámica,19361,Ingenieria Industrial,8,D,opcional
+Bases de Datos II,20449,Ingenieria Industrial,1,F,obligatorio
+Fundamentos de Programación,89169,Ingenieria Industrial,10,B,opcional
+Electrónica Analógica,87853,Ingenieria Industrial,10,F,obligatorio
+Resistencia de Materiales,31861,Ingenieria en Sistemas,4,E,obligatorio
+Simulación de Sistemas,17500,Ingenieria Mecanica,2,A,obligatorio
+Simulación de Sistemas,17500,Ingenieria Mecanica,10,B,obligatorio
+Matemática Discreta,37902,Ingenieria Mecanica,1,A,obligatorio
+Ecuaciones Diferenciales,20748,Ingenieria Industrial,2,E,opcional
+Mecánica de Materiales,55003,Ingenieria Industrial,9,D,opcional
+Química para Ingenieros,34263,Ingenieria Mecanica,4,B,obligatorio
+Ingeniería de Métodos,62575,Ingenieria Mecanica,2,D,opcional
+Redes de Computadoras,98684,Ingenieria Mecanica,2,F,opcional
+Estructuras de Datos,86647,Ingenieria Mecanica,7,E,obligatorio
+Simulación de Sistemas,17500,Ingenieria Mecanica,8,E,obligatorio
+Ingeniería de Métodos,62575,Ingenieria en Sistemas,6,F,obligatorio
+Ética Profesional,49288,Ingenieria Civil,1,E,opcional
+Redes de Computadoras,98684,Ingenieria en Sistemas,3,B,opcional
+Ecuaciones Diferenciales,20748,Ingenieria en Sistemas,6,F,obligatorio
+Mecánica de Materiales,55003,Ingenieria Mecanica,6,F,obligatorio
+Inteligencia Artificial,19404,Ingenieria Mecanica,8,E,opcional
+Física General I,40056,Ingenieria Industrial,10,E,opcional
+Topografía,30855,Ingenieria Civil,10,A,obligatorio
+Análisis Numérico,14966,Ingenieria Civil,10,B,obligatorio
+Bases de Datos I,12500,Ingenieria en Sistemas,6,C,obligatorio
+Matemática Discreta,37902,Ingenieria Civil,2,D,opcional
+Inteligencia Artificial,19404,Ingenieria Civil,10,F,obligatorio
+Análisis Numérico,14966,Ingenieria Mecanica,3,B,opcional
+Cálculo Integral,61683,Ingenieria Civil,1,E,opcional
+Ecuaciones Diferenciales,20748,Ingenieria en Sistemas,7,C,opcional
+Electrónica Digital,19362,Ingenieria Civil,10,A,obligatorio
+Diseño de Máquinas,52361,Ingenieria Industrial,4,A,opcional
+Matemática Discreta,37902,Ingenieria Civil,3,F,obligatorio
+Mecánica Clásica,74572,Ingenieria Mecanica,6,D,opcional
+Análisis Numérico,14966,Ingenieria Mecanica,3,A,opcional
+Ecuaciones Diferenciales,20748,Ingenieria en Sistemas,6,E,opcional
+Ingeniería de Métodos,62575,Ingenieria Mecanica,10,E,opcional
+Ingeniería de Software I,33611,Ingenieria Industrial,7,F,obligatorio
+Simulación de Sistemas,17500,Ingenieria Civil,1,A,opcional
+Ingeniería de Métodos,62575,Ingenieria Civil,1,C,opcional
+Gestión de Proyectos,17385,Ingenieria Mecanica,2,D,opcional
+Sistemas de Control,98620,Ingenieria Industrial,9,C,opcional
+Ingeniería de Software II,23149,Ingenieria Mecanica,5,D,opcional
+Simulación de Sistemas,17500,Ingenieria en Sistemas,6,A,obligatorio
+Hidráulica,32549,Ingenieria Mecanica,5,E,obligatorio
+Matemática Discreta,37902,Ingenieria Civil,10,D,obligatorio
+Mecánica de Materiales,55003,Ingenieria en Sistemas,7,F,opcional
+Ingeniería de Software II,23149,Ingenieria Mecanica,5,F,opcional
+Gestión de Proyectos,17385,Ingenieria Civil,2,D,opcional
+Cálculo Integral,61683,Ingenieria en Sistemas,3,F,obligatorio
+Bases de Datos I,12500,Ingenieria Mecanica,10,B,opcional
+Inteligencia Artificial,19404,Ingenieria Mecanica,5,A,obligatorio
+Ecuaciones Diferenciales,20748,Ingenieria Industrial,5,A,opcional
+Termodinámica,19361,Ingenieria Mecanica,9,F,opcional
+Física General II,41727,Ingenieria Mecanica,9,A,obligatorio
+Cálculo Integral,61683,Ingenieria Mecanica,5,F,obligatorio
+Bases de Datos II,20449,Ingenieria Civil,3,B,obligatorio
+Redes de Computadoras,98684,Ingenieria Industrial,4,D,opcional
+Mecánica Clásica,74572,Ingenieria Industrial,4,B,obligatorio
+Física General I,40056,Ingenieria en Sistemas,4,A,obligatorio
+Resistencia de Materiales,31861,Ingenieria Civil,2,C,opcional
+Química para Ingenieros,34263,Ingenieria en Sistemas,5,C,opcional
+Topografía,30855,Ingenieria Mecanica,7,C,opcional
+Automatización Industrial,20450,Ingenieria Mecanica,4,C,obligatorio
+Circuitos Eléctricos,26492,Ingenieria en Sistemas,6,F,obligatorio
+Electrónica Digital,19362,Ingenieria Civil,1,B,opcional
+Gestión de Proyectos,17385,Ingenieria en Sistemas,5,F,obligatorio
+Robótica,53844,Ingenieria en Sistemas,7,A,obligatorio
+Hidráulica,32549,Ingenieria en Sistemas,10,E,obligatorio
+Ingeniería Económica,31946,Ingenieria Mecanica,3,F,opcional
+Física General I,40056,Ingenieria Mecanica,4,E,obligatorio
+Bases de Datos I,12500,Ingenieria en Sistemas,4,B,obligatorio
+Electrónica Analógica,87853,Ingenieria Mecanica,6,F,obligatorio
+Arquitectura de Computadoras,17685,Ingenieria Mecanica,7,F,opcional
+Fundamentos de Programación,89169,Ingenieria en Sistemas,7,A,opcional
+Ingeniería de Software I,33611,Ingenieria Industrial,10,E,opcional
+Ética Profesional,49288,Ingenieria Industrial,4,C,opcional
+Mecánica de Materiales,55003,Ingenieria Mecanica,10,B,opcional
+Ingeniería Ambiental,45333,Ingenieria Mecanica,2,D,opcional
+Análisis Numérico,14966,Ingenieria Industrial,10,B,opcional
+Gestión de Proyectos,17385,Ingenieria Mecanica,4,F,obligatorio
+Ingeniería de Métodos,62575,Ingenieria Mecanica,4,F,opcional
+Hidráulica,32549,Ingenieria Mecanica,4,F,opcional
+Robótica,53844,Ingenieria Industrial,8,D,obligatorio
+Química para Ingenieros,34263,Ingenieria Civil,9,A,opcional
+Bases de Datos II,20449,Ingenieria Mecanica,8,A,opcional
+Hidráulica,32549,Ingenieria Industrial,9,A,opcional
+Robótica,53844,Ingenieria Industrial,9,E,obligatorio
+Cálculo Integral,61683,Ingenieria Civil,3,E,obligatorio
+Cálculo Diferencial,48902,Ingenieria Industrial,6,A,opcional
+Procesos de Manufactura,36190,Ingenieria Civil,4,F,opcional
+Electrónica Analógica,87853,Ingenieria Mecanica,3,D,opcional
+Ética Profesional,49288,Ingenieria Mecanica,5,F,obligatorio
+Ingeniería Ambiental,45333,Ingenieria Civil,10,D,opcional
+Bases de Datos II,20449,Ingenieria en Sistemas,10,B,obligatorio
+Álgebra Lineal,95681,Ingenieria en Sistemas,8,E,opcional
+Simulación de Sistemas,17500,Ingenieria Industrial,3,F,obligatorio
+Redes de Computadoras,98684,Ingenieria Mecanica,3,B,obligatorio
+Física General II,41727,Ingenieria Industrial,2,F,obligatorio
+Bases de Datos I,12500,Ingenieria Mecanica,5,D,opcional
+Fundamentos de Programación,89169,Ingenieria en Sistemas,5,D,opcional
+Bases de Datos I,12500,Ingenieria Industrial,1,C,opcional
+Fundamentos de Programación,89169,Ingenieria Mecanica,8,D,opcional
+Ingeniería Económica,31946,Ingenieria Civil,7,B,opcional
+Arquitectura de Computadoras,17685,Ingenieria en Sistemas,4,A,opcional
+Topografía,30855,Ingenieria Industrial,8,B,obligatorio
+Ingeniería de Software I,33611,Ingenieria Industrial,2,B,opcional
+Diseño de Máquinas,52361,Ingenieria Industrial,9,F,opcional
+Bases de Datos II,20449,Ingenieria Industrial,5,B,obligatorio
+Inteligencia Artificial,19404,Ingenieria Mecanica,1,D,obligatorio
+Gestión de Proyectos,17385,Ingenieria en Sistemas,5,C,opcional
+Ingeniería de Software II,23149,Ingenieria en Sistemas,4,D,obligatorio
+Física General II,41727,Ingenieria Civil,6,E,obligatorio
+Sistemas de Control,98620,Ingenieria Civil,4,C,opcional
+Cálculo Diferencial,48902,Ingenieria Civil,7,E,opcional
+Ingeniería de Software I,33611,Ingenieria Mecanica,9,F,obligatorio
+Arquitectura de Computadoras,17685,Ingenieria Industrial,9,B,opcional
+Cálculo Diferencial,48902,Ingenieria Mecanica,1,D,opcional
+Electrónica Digital,19362,Ingenieria Civil,10,A,obligatorio
+Automatización Industrial,20450,Ingenieria Industrial,4,B,opcional
+Ingeniería Ambiental,45333,Ingenieria en Sistemas,9,E,opcional
+Fundamentos de Programación,89169,Ingenieria Civil,7,B,opcional
+Ingeniería Ambiental,45333,Ingenieria en Sistemas,2,F,opcional
+Análisis Numérico,14966,Ingenieria en Sistemas,7,C,obligatorio
+Bases de Datos II,20449,Ingenieria en Sistemas,3,C,opcional
+Termodinámica,19361,Ingenieria Mecanica,8,E,obligatorio
+Electrónica Analógica,87853,Ingenieria Industrial,5,C,opcional
+Ingeniería de Software II,23149,Ingenieria Industrial,1,D,opcional
+Ingeniería de Métodos,62575,Ingenieria Industrial,2,A,opcional
+Sistemas de Control,98620,Ingenieria Mecanica,4,E,obligatorio
+Ingeniería Ambiental,45333,Ingenieria Mecanica,3,F,opcional
+Automatización Industrial,20450,Ingenieria Civil,5,B,obligatorio
+Sistemas de Control,98620,Ingenieria en Sistemas,5,B,obligatorio
+Diseño de Máquinas,52361,Ingenieria Industrial,8,E,opcional
+Ingeniería de Software I,33611,Ingenieria en Sistemas,8,B,opcional
+Ingeniería de Métodos,62575,Ingenieria en Sistemas,7,D,opcional
+Robótica,53844,Ingenieria Mecanica,9,B,obligatorio
+Física General I,40056,Ingenieria Industrial,10,B,opcional
+Arquitectura de Computadoras,17685,Ingenieria Industrial,1,C,opcional
+Ética Profesional,49288,Ingenieria Civil,10,F,obligatorio
+Arquitectura de Computadoras,17685,Ingenieria Industrial,8,A,obligatorio
+Robótica,53844,Ingenieria Civil,9,C,opcional
+Resistencia de Materiales,31861,Ingenieria en Sistemas,2,E,obligatorio
+Ingeniería de Software II,23149,Ingenieria en Sistemas,1,D,opcional
+Cálculo Integral,61683,Ingenieria Mecanica,9,A,opcional
+Álgebra Lineal,95681,Ingenieria Civil,5,A,obligatorio
+Sistemas Operativos,19723,Ingenieria Civil,1,D,obligatorio
+Bases de Datos II,20449,Ingenieria Mecanica,3,D,opcional
+Resistencia de Materiales,31861,Ingenieria Mecanica,2,B,obligatorio
+Mecánica Clásica,74572,Ingenieria Mecanica,6,C,opcional
+Sistemas Operativos,19723,Ingenieria Civil,2,F,obligatorio
+Electrónica Digital,19362,Ingenieria en Sistemas,6,A,obligatorio
+Diseño de Máquinas,52361,Ingenieria en Sistemas,10,A,obligatorio
+Ingeniería Económica,31946,Ingenieria Mecanica,10,D,opcional
+Inteligencia Artificial,19404,Ingenieria Civil,10,B,opcional
+Inteligencia Artificial,19404,Ingenieria Mecanica,6,F,obligatorio
+Cálculo Diferencial,48902,Ingenieria Industrial,1,D,opcional
+Sistemas de Control,98620,Ingenieria Civil,10,D,obligatorio
+Física General I,40056,Ingenieria Mecanica,1,F,opcional
+Redes de Computadoras,98684,Ingenieria en Sistemas,5,C,obligatorio
+Ingeniería de Software I,33611,Ingenieria Civil,3,E,opcional
+Sistemas de Control,98620,Ingenieria en Sistemas,3,D,opcional
+Simulación de Sistemas,17500,Ingenieria Mecanica,5,F,opcional
+Simulación de Sistemas,17500,Ingenieria Civil,1,E,opcional
+Electrónica Analógica,87853,Ingenieria Industrial,5,C,opcional
+Ingeniería de Software II,23149,Ingenieria Mecanica,4,B,obligatorio
+Automatización Industrial,20450,Ingenieria Industrial,2,F,opcional
+Sistemas Operativos,19723,Ingenieria Civil,3,B,obligatorio
+Álgebra Lineal,95681,Ingenieria Mecanica,8,D,opcional
+Electrónica Analógica,87853,Ingenieria Civil,2,F,opcional
+Matemática Discreta,37902,Ingenieria Civil,9,B,opcional
+Redes de Computadoras,98684,Ingenieria en Sistemas,9,A,obligatorio
+Sistemas de Control,98620,Ingenieria Mecanica,10,E,obligatorio
+Procesos de Manufactura,36190,Ingenieria en Sistemas,1,A,opcional
+Bases de Datos I,12500,Ingenieria Industrial,1,D,opcional
+Ingeniería Ambiental,45333,Ingenieria en Sistemas,1,F,opcional
+Ingeniería de Software II,23149,Ingenieria Industrial,6,A,obligatorio
+Redes de Computadoras,98684,Ingenieria Industrial,4,C,obligatorio
+Procesos de Manufactura,36190,Ingenieria Civil,3,E,obligatorio
+Electrónica Digital,19362,Ingenieria en Sistemas,4,B,opcional
+Hidráulica,32549,Ingenieria Civil,8,D,opcional
+Resistencia de Materiales,31861,Ingenieria en Sistemas,4,A,obligatorio
+Gestión de Proyectos,17385,Ingenieria Mecanica,8,B,obligatorio
+Procesos de Manufactura,36190,Ingenieria en Sistemas,8,C,obligatorio
+Arquitectura de Computadoras,17685,Ingenieria Mecanica,2,C,obligatorio
+Sistemas Operativos,19723,Ingenieria Civil,4,F,obligatorio
+Diseño de Máquinas,52361,Ingenieria Mecanica,6,A,opcional
+Procesos de Manufactura,36190,Ingenieria en Sistemas,1,F,opcional
+Cálculo Integral,61683,Ingenieria Civil,4,A,obligatorio
+Ingeniería de Software II,23149,Ingenieria en Sistemas,9,A,opcional
+Redes de Computadoras,98684,Ingenieria Industrial,9,D,opcional
+Ingeniería Ambiental,45333,Ingenieria Mecanica,4,F,obligatorio
+Electrónica Digital,19362,Ingenieria en Sistemas,5,B,opcional
+Estructuras de Datos,86647,Ingenieria Industrial,9,C,opcional
+Termodinámica,19361,Ingenieria Civil,7,B,obligatorio
+Hidráulica,32549,Ingenieria Industrial,5,A,obligatorio
+Mecánica Clásica,74572,Ingenieria Civil,1,C,opcional
+Bases de Datos II,20449,Ingenieria Civil,3,E,obligatorio
+Física General I,40056,Ingenieria en Sistemas,8,D,opcional
+Robótica,53844,Ingenieria en Sistemas,4,E,obligatorio
+Inteligencia Artificial,19404,Ingenieria Industrial,1,A,opcional
+Ética Profesional,49288,Ingenieria en Sistemas,9,B,opcional
+Cálculo Integral,61683,Ingenieria en Sistemas,5,F,obligatorio
+Topografía,30855,Ingenieria Civil,7,D,opcional
+Resistencia de Materiales,31861,Ingenieria Civil,5,C,opcional
+Circuitos Eléctricos,26492,Ingenieria Industrial,1,D,obligatorio
+Robótica,53844,Ingenieria Industrial,4,A,obligatorio
+Ingeniería Ambiental,45333,Ingenieria Mecanica,1,C,obligatorio
+Estructuras de Datos,86647,Ingenieria Mecanica,7,C,opcional
+Electrónica Analógica,87853,Ingenieria Mecanica,6,D,opcional
+Hidráulica,32549,Ingenieria Mecanica,9,F,obligatorio
+Robótica,53844,Ingenieria Industrial,2,F,obligatorio
+Termodinámica,19361,Ingenieria Mecanica,1,E,opcional
+Ingeniería Ambiental,45333,Ingenieria Civil,6,B,opcional
+Cálculo Integral,61683,Ingenieria Industrial,10,F,obligatorio
+Termodinámica,19361,Ingenieria Mecanica,4,D,opcional
+Ingeniería de Software I,33611,Ingenieria Mecanica,7,E,opcional
+Estructuras de Datos,86647,Ingenieria Industrial,1,B,opcional
+Hidráulica,32549,Ingenieria en Sistemas,10,D,obligatorio
+Topografía,30855,Ingenieria Industrial,6,A,obligatorio
+Bases de Datos I,12500,Ingenieria Industrial,3,B,opcional
+Física General II,41727,Ingenieria Civil,7,F,obligatorio
+Procesos de Manufactura,36190,Ingenieria Civil,6,B,opcional
+Física General II,41727,Ingenieria Civil,9,D,obligatorio
+Bases de Datos I,12500,Ingenieria en Sistemas,9,E,opcional
+Ingeniería de Software I,33611,Ingenieria Mecanica,5,A,obligatorio
+Termodinámica,19361,Ingenieria Industrial,3,F,opcional
+Hidráulica,32549,Ingenieria Civil,3,F,opcional
+Ecuaciones Diferenciales,20748,Ingenieria Civil,8,F,obligatorio
+Ingeniería de Software I,33611,Ingenieria Civil,8,B,opcional
+Redes de Computadoras,98684,Ingenieria en Sistemas,9,E,opcional
+Química para Ingenieros,34263,Ingenieria en Sistemas,5,B,opcional
+Circuitos Eléctricos,26492,Ingenieria Industrial,10,D,obligatorio
+Automatización Industrial,20450,Ingenieria en Sistemas,9,E,opcional
+Mecánica Clásica,74572,Ingenieria Civil,4,C,obligatorio
+Sistemas de Control,98620,Ingenieria en Sistemas,3,E,obligatorio
+Electrónica Analógica,87853,Ingenieria Civil,6,E,opcional
+Bases de Datos II,20449,Ingenieria Mecanica,4,C,opcional
+Diseño de Máquinas,52361,Ingenieria Mecanica,10,C,obligatorio
+Cálculo Diferencial,48902,Ingenieria en Sistemas,9,A,obligatorio
+Cálculo Integral,61683,Ingenieria Mecanica,3,B,opcional
+Estructuras de Datos,86647,Ingenieria Industrial,9,A,opcional
+Hidráulica,32549,Ingenieria en Sistemas,6,A,obligatorio
+Simulación de Sistemas,17500,Ingenieria Civil,7,F,obligatorio
+Electrónica Analógica,87853,Ingenieria en Sistemas,6,E,obligatorio
+Electrónica Digital,19362,Ingenieria Industrial,5,C,opcional
+Electrónica Digital,19362,Ingenieria Industrial,3,A,opcional
+Ingeniería Económica,31946,Ingenieria Civil,9,D,opcional
+Ética Profesional,49288,Ingenieria en Sistemas,2,C,obligatorio
+Cálculo Diferencial,48902,Ingenieria Mecanica,1,F,obligatorio
+Mecánica Clásica,74572,Ingenieria en Sistemas,2,A,opcional
+Física General II,41727,Ingenieria Civil,7,D,opcional
+Hidráulica,32549,Ingenieria en Sistemas,4,F,opcional
+Fundamentos de Programación,89169,Ingenieria en Sistemas,3,C,opcional
+Robótica,53844,Ingenieria Industrial,4,C,opcional
+Topografía,30855,Ingenieria Civil,5,D,obligatorio
+Química para Ingenieros,34263,Ingenieria Civil,7,B,obligatorio
+Automatización Industrial,20450,Ingenieria Industrial,4,A,opcional
+Ética Profesional,49288,Ingenieria Industrial,6,E,obligatorio
+Mecánica de Materiales,55003,Ingenieria Civil,2,B,opcional
+Ingeniería Económica,31946,Ingenieria Civil,3,D,obligatorio
+Mecánica de Materiales,55003,Ingenieria Mecanica,8,A,obligatorio
+Topografía,30855,Ingenieria en Sistemas,6,E,obligatorio
+Topografía,30855,Ingenieria Mecanica,8,A,opcional
+Ingeniería Ambiental,45333,Ingenieria Civil,2,B,opcional
+Arquitectura de Computadoras,17685,Ingenieria en Sistemas,5,B,obligatorio
+Procesos de Manufactura,36190,Ingenieria Mecanica,9,C,obligatorio
+Mecánica de Materiales,55003,Ingenieria Industrial,6,D,obligatorio
+Inteligencia Artificial,19404,Ingenieria Civil,10,C,opcional
+Sistemas Operativos,19723,Ingenieria Industrial,9,C,opcional
+Simulación de Sistemas,17500,Ingenieria Mecanica,5,B,opcional
+Termodinámica,19361,Ingenieria Civil,4,F,opcional
+Diseño de Máquinas,52361,Ingenieria Industrial,3,B,opcional
+Ecuaciones Diferenciales,20748,Ingenieria Industrial,2,A,opcional
+Cálculo Integral,61683,Ingenieria en Sistemas,6,D,opcional
+Inteligencia Artificial,19404,Ingenieria Civil,7,A,opcional
+Ingeniería de Software I,33611,Ingenieria Mecanica,1,D,obligatorio
+Mecánica Clásica,74572,Ingenieria Civil,4,B,opcional
+Cálculo Integral,61683,Ingenieria Industrial,9,F,obligatorio
+Ingeniería de Software I,33611,Ingenieria Mecanica,7,E,opcional
+Fundamentos de Programación,89169,Ingenieria Mecanica,5,D,obligatorio
+Ingeniería de Software II,23149,Ingenieria Mecanica,7,E,obligatorio
+Inteligencia Artificial,19404,Ingenieria Civil,3,B,opcional
+Automatización Industrial,20450,Ingenieria en Sistemas,3,C,obligatorio
+Redes de Computadoras,98684,Ingenieria Industrial,2,B,opcional
+Robótica,53844,Ingenieria Mecanica,2,D,obligatorio
+Ingeniería de Software II,23149,Ingenieria Mecanica,6,D,opcional
+Bases de Datos I,12500,Ingenieria Civil,6,B,opcional
+Química para Ingenieros,34263,Ingenieria en Sistemas,5,B,opcional
+Física General II,41727,Ingenieria Industrial,6,A,opcional
+Ingeniería Económica,31946,Ingenieria en Sistemas,8,F,opcional
+Cálculo Integral,61683,Ingenieria Industrial,8,C,obligatorio
+Diseño de Máquinas,52361,Ingenieria Civil,4,C,obligatorio
