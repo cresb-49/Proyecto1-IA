@@ -3,6 +3,8 @@ import random
 import os
 from clases import Curso, Docente, Salon, Asignacion, RelacionDocenteCurso
 from carga import CargadorDatos
+from exportador_excel import ExportadorExcel
+from exportador_pdf import ExportadorPDF
 
 
 class Horario:
@@ -89,14 +91,32 @@ class AlgoritmoGenetico:
                 docente = random.choice(
                     [d for d in self.docentes if d.registro in posibles_docentes])
                 salon = random.choice(self.salones)
-                horario = self.generar_horario_aleatorio()
+                horarios_validos = self.generar_horarios_validos(docente)
+                if not horarios_validos:
+                    continue
+                horario = random.choice(horarios_validos)
                 asignaciones.append(Asignacion(curso, docente, salon, horario))
             self.poblacion.append(Horario(asignaciones))
 
-    def generar_horario_aleatorio(self):
-        horarios = ["13:40", "14:30", "15:20", "16:10",
-                    "17:00", "17:50", "18:40", "19:30", "20:20", "21:10"]
-        return random.choice(horarios)
+    def convertir_a_minutos(self, hora: str) -> int:
+        h, m = map(int, hora.split(":"))
+        return h * 60 + m
+
+    def generar_horarios_validos(self, docente: Docente) -> list:
+        inicio = self.convertir_a_minutos(docente.hora_entrada)
+        fin = self.convertir_a_minutos(docente.hora_salida)
+
+        # Slots posibles en el sistema
+        todos_los_slots = ["13:40", "14:30", "15:20", "16:10",
+                           "17:00", "17:50", "18:40", "19:30", "20:20"]
+        slots_validos = []
+
+        for slot in todos_los_slots:
+            slot_min = self.convertir_a_minutos(slot)
+            if ((inicio <= slot_min) and ((slot_min + 50) <= fin)):
+                slots_validos.append(slot)
+
+        return slots_validos
 
     def evolucionar(self):
         for gen in range(self.generaciones):
@@ -131,7 +151,10 @@ class AlgoritmoGenetico:
             return
         asignacion = random.choice(individuo.asignaciones)
         # mutar horario o salón o docente
-        asignacion.horario = self.generar_horario_aleatorio()
+        docente = asignacion.docente
+        horarios_validos = self.generar_horarios_validos(docente)
+        if horarios_validos:
+            asignacion.horario = random.choice(horarios_validos)
 
 
 def main():
@@ -147,8 +170,39 @@ def main():
     relaciones = CargadorDatos.cargar_relaciones(path_relaciones)
     salones = CargadorDatos.cargar_salones(path_salones)
 
-    # Visualizar los datos cargados
-    print("Docentes:", docentes)
+    # Preguntamos al usuario si quiere los de semestre pare o impar
+    while True:
+        semestre = input(
+            "¿Quieres los cursos de semestre par o impar? (p/i): ").strip().lower()
+        if semestre in ['p', 'i']:
+            break
+        else:
+            print("Opción inválida. Por favor, elige 'p' para par o 'i' para impar.")
+
+    cursos_filtrados = []
+    for curso in cursos:
+        if semestre == 'p' and curso.semestre % 2 == 0:
+            cursos_filtrados.append(curso)
+        elif semestre == 'i' and curso.semestre % 2 != 0:
+            cursos_filtrados.append(curso)
+
+    # --- Iniciar algoritmo genético ---
+    ag = AlgoritmoGenetico(
+        cursos=cursos_filtrados,
+        docentes=docentes,
+        salones=salones,
+        relaciones=relaciones,
+        generaciones=50,
+        poblacion_inicial=100
+    )
+
+    ag.generar_poblacion_inicial()
+    ag.evolucionar()
+
+    print("\n--- Mejor horario encontrado ---")
+    ExportadorExcel.exportar_horario(ag.mejor.asignaciones)
+    ExportadorPDF.exportar_horario(ag.mejor.asignaciones)
+    print(f"Aptitud final: {ag.mejor.aptitud}")
 
 
 if __name__ == "__main__":
