@@ -112,7 +112,6 @@ class AppHorario:
         self.ejecutar_algoritmo_genetico(seleccionados)
         messagebox.showinfo(
             "Éxito", "Horario generado y exportado exitosamente.")
-        self.mostrar_html_desde_archivo()
 
     def ejecutar_algoritmo_genetico(self, cursos_seleccionados):
         # Carga de archivos CSV
@@ -143,18 +142,89 @@ class AppHorario:
         print("Asignaciones generadas:")
         for asignacion in ag.mejor.asignaciones:
             print(asignacion)
-        return ag.mejor.asignaciones
-
-    def mostrar_html_desde_archivo(self,ruta="horario_generado.html"):
+        self.mostrar_vista_edicion(ag.mejor.asignaciones)
+        
+    def mostrar_vista_edicion(self, asignaciones):
         ventana = Toplevel()
-        ventana.title("Vista HTML del Horario")
-        ventana.geometry("800x600")
+        ventana.title("Editar Asignaciones")
+        ventana.geometry("1000x500")
 
-        with open(ruta, encoding="utf-8") as f:
-            contenido = f.read()
+        tree = ttk.Treeview(ventana, columns=("curso", "docente", "horario", "salon"), show="headings")
+        tree.heading("curso", text="Curso")
+        tree.heading("docente", text="Docente")
+        tree.heading("horario", text="Horario")
+        tree.heading("salon", text="Salón")
 
-        label = HTMLLabel(ventana, html=contenido)
-        label.pack(fill="both", expand=True)
+        for asignacion in asignaciones:
+            tree.insert("", "end", values=(
+                asignacion.curso.nombre,
+                asignacion.docente.nombre,
+                asignacion.horario,
+                asignacion.salon.nombre
+            ))
+
+        tree.pack(expand=True, fill="both")
+
+        def aplicar_cambio():
+            selected = tree.selection()
+            if not selected:
+                messagebox.showwarning("Selecciona", "Selecciona una fila.")
+                return
+            index = tree.index(selected[0])
+            asignacion = asignaciones[index]
+
+            popup = Toplevel(ventana)
+            popup.title("Editar Asignación")
+
+            tk.Label(popup, text="Nuevo Horario:").grid(row=0, column=0)
+            entry_horario = tk.Entry(popup)
+            entry_horario.insert(0, str(asignacion.horario))
+            entry_horario.grid(row=0, column=1)
+
+            tk.Label(popup, text="Nuevo Salón:").grid(row=1, column=0)
+            entry_salon = tk.Entry(popup)
+            entry_salon.insert(0, asignacion.salon.nombre)
+            entry_salon.grid(row=1, column=1)
+
+            def validar_y_aplicar():
+                nuevo_horario = entry_horario.get()
+                nuevo_salon = entry_salon.get()
+
+                try:
+                    # Validación de hora
+                    if not asignacion.docente.hora_entrada <= nuevo_horario <= asignacion.docente.hora_salida:
+                        raise ValueError("Horario fuera del rango del docente.")
+
+                    # Validacion del salon
+                    
+                    # Aplicar cambios
+                    asignacion.horario = nuevo_horario
+                    asignacion.salon.nombre = nuevo_salon
+
+                    tree.item(selected[0], values=(
+                        asignacion.curso.nombre,
+                        asignacion.docente.nombre,
+                        nuevo_horario,
+                        nuevo_salon
+                    ))
+                    popup.destroy()
+                except Exception as e:
+                    messagebox.showerror("Error", str(e))
+
+            tk.Button(popup, text="Aplicar", command=validar_y_aplicar).grid(row=2, columnspan=2, pady=10)
+
+        def guardar_cambios():
+            ExportadorExcel.exportar_horario(asignaciones)
+            ExportadorPDF.exportar_horario(asignaciones)
+            messagebox.showinfo("Guardado", "Cambios guardados y exportados exitosamente.")
+            ventana.destroy()
+
+        btn_editar = tk.Button(ventana, text="Editar selección", command=aplicar_cambio)
+        btn_editar.pack(pady=5)
+
+        btn_guardar = tk.Button(ventana, text="Guardar y exportar", command=guardar_cambios)
+        btn_guardar.pack(pady=5)
+
 
 
 if __name__ == "__main__":

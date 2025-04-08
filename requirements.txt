@@ -1,0 +1,5 @@
+tkhtmlview
+pandas
+jinja2
+pdfkit
+openpyxl

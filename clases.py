@@ -5,7 +5,7 @@ class Curso:
         self.carrera = carrera
         self.semestre = int(semestre)
         self.seccion = seccion
-        self.tipo = tipo  # obligatorio / optativo
+        self.tipo = tipo
         
     def __repr__(self):
         return f"Curso(codigo={self.codigo}, nombre={self.nombre}, carrera={self.carrera}, semestre={self.semestre}, seccion={self.seccion}, tipo={self.tipo})\n"
@@ -29,7 +29,7 @@ class Salon:
         return f"Salon(id={self.id}, nombre={self.nombre})\n"
 class RelacionDocenteCurso:
     def __init__(self):
-        self.relaciones = {}  # {registro: [codigos_curso]}
+        self.relaciones = {}
 
     def agregar(self, registro, codigo):
         self.relaciones.setdefault(registro, []).append(codigo)
@@ -45,7 +45,7 @@ class Asignacion:
         self.curso = curso
         self.docente = docente
         self.salon = salon
-        self.horario = horario  # ej: '14:30'
+        self.horario = horario
         
     def __repr__(self):
         return f"Asignacion(curso={self.curso}, docente={self.docente}, salon={self.salon}, horario={self.horario})\n"

@@ -1,6 +1,7 @@
 from jinja2 import Template
 from pdfkit.api import configuration
 import pdfkit
+import platform
 
 
 class ExportadorPDF:
@@ -10,13 +11,11 @@ class ExportadorPDF:
                     "17:00", "17:50", "18:40", "19:30", "20:20"]
         salones = list({a.salon.nombre for a in asignaciones})
 
-        # Construir tabla
         tabla = {hora: {s: "" for s in salones} for hora in horarios}
         for a in asignaciones:
             content = f"{a.curso.nombre}<br>{a.curso.codigo}<br>{a.docente.nombre}<br>Semetre: {a.curso.semestre}<br>{a.curso.carrera}"
             tabla[a.horario][a.salon.nombre] = content
 
-        # HTML template
         template = Template("""
         <!DOCTYPE html>
         <html>
@@ -56,10 +55,19 @@ class ExportadorPDF:
         with open("horario_generado.html", "w", encoding="utf-8") as f:
             f.write(html)
 
-        wkhtml_config = configuration(
-            wkhtmltopdf='C:/Program Files/wkhtmltopdf/bin/wkhtmltopdf.exe')
-        pdfkit.from_file("horario_generado.html", (nombre_pdf+"landscape.pdf"),
-                         configuration=wkhtml_config, options={"orientation": "Landscape"})
-        pdfkit.from_file("horario_generado.html", nombre_pdf+".pdf",
-                         configuration=wkhtml_config)
-        print(f"PDF generado: {nombre_pdf}")
+        # Detectamos si estamos en windows o linux
+        sysos = platform.system()
+        print(f"Sistema operativo detectado: {sysos}")
+        if sysos == "Linux":
+            pdfkit.from_file("horario_generado.html", (nombre_pdf+"landscape.pdf"),
+                             options={"orientation": "Landscape"})
+            pdfkit.from_file("horario_generado.html", nombre_pdf+".pdf")
+            print(f"PDF generado: {nombre_pdf}")
+        elif sysos == "Windows":
+            wkhtml_config = configuration(
+                wkhtmltopdf='C:/Program Files/wkhtmltopdf/bin/wkhtmltopdf.exe')
+            pdfkit.from_file("horario_generado.html", (nombre_pdf+"landscape.pdf"),
+                             configuration=wkhtml_config, options={"orientation": "Landscape"})
+            pdfkit.from_file("horario_generado.html", nombre_pdf+".pdf",
+                             configuration=wkhtml_config)
+            print(f"PDF generado: {nombre_pdf}")

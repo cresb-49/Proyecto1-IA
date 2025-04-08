@@ -25,19 +25,22 @@ class Horario:
             key_c = (asignacion.curso.carrera,
                      asignacion.curso.semestre, asignacion.horario)
 
+            # Conflicto de docente duplicado en horario
             if key_d in horarios_docente:
-                conflictos += 1  # docente duplicado
+                conflictos += 1
             else:
                 horarios_docente[key_d] = True
 
+            # Conflico de salon duplicado en horario
             if key_s in horarios_salon:
-                conflictos += 1  # salón duplicado
+                conflictos += 1
             else:
                 horarios_salon[key_s] = True
 
+            # Conflictos por cursos obligatorios traslapados
             if asignacion.curso.tipo == "obligatorio":
                 if key_c in cursos_semestre:
-                    conflictos += 1  # cursos obligatorios del mismo semestre traslapados
+                    conflictos += 1
                 else:
                     cursos_semestre[key_c] = True
 
@@ -45,8 +48,6 @@ class Horario:
 
     def contar_bonus(self):
         bonus = 0
-        # BONUS: cursos consecutivos del mismo semestre
-        # Agrupar por carrera+semestre y ordenar horarios
         grupos = {}
         for asignacion in self.asignaciones:
             key = (asignacion.curso.carrera, asignacion.curso.semestre)
@@ -101,7 +102,6 @@ class AlgoritmoGenetico:
         inicio = self.convertir_a_minutos(docente.hora_entrada)
         fin = self.convertir_a_minutos(docente.hora_salida)
 
-        # Slots posibles en el sistema
         todos_los_slots = ["13:40", "14:30", "15:20", "16:10",
                            "17:00", "17:50", "18:40", "19:30", "20:20"]
         slots_validos = []
@@ -145,7 +145,6 @@ class AlgoritmoGenetico:
         if random.random() > tasa:
             return
         asignacion = random.choice(individuo.asignaciones)
-        # mutar horario o salón o docente
         docente = asignacion.docente
         horarios_validos = self.generar_horarios_validos(docente)
         if horarios_validos:
