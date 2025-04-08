@@ -27,11 +27,9 @@ class AppHorario:
         frame_top.pack(pady=10)
 
         btn_pares = tk.Button(
-            frame_top, text="Seleccionar pares", command=self.seleccionar_pares)
+            frame_top, text="Semestre Par", command=self.seleccionar_pares)
         btn_impares = tk.Button(
-            frame_top, text="Seleccionar impares", command=self.seleccionar_impares)
-        btn_todos = tk.Button(frame_top, text="Seleccionar todos",
-                              command=lambda: self.seleccionar_todos(True))
+            frame_top, text="Semestre Impar", command=self.seleccionar_impares)
         btn_nada = tk.Button(frame_top, text="Quitar selección",
                              command=lambda: self.seleccionar_todos(False))
         btn_generar = tk.Button(
@@ -39,7 +37,6 @@ class AppHorario:
 
         btn_pares.pack(side=tk.LEFT, padx=5)
         btn_impares.pack(side=tk.LEFT, padx=5)
-        btn_todos.pack(side=tk.LEFT, padx=5)
         btn_nada.pack(side=tk.LEFT, padx=5)
         btn_generar.pack(side=tk.LEFT, padx=5)
 
@@ -153,7 +150,7 @@ class AppHorario:
         tree.heading("docente", text="Docente")
         tree.heading("horario", text="Horario")
         tree.heading("salon", text="Salón")
-        
+
         # Generamos un map de las asignaciones basados en el horario y salon
         asignaciones_map = {}
 
@@ -178,23 +175,24 @@ class AppHorario:
                 return
             index = tree.index(selected[0])
             asignacion = asignaciones[index]
-            
+
             current_key = (asignacion.horario, asignacion.salon.nombre)
 
             popup = Toplevel(ventana)
             popup.title("Editar Asignación")
-            
-            horarios_disponibles =["13:40","14:30","15:20","16:10","17:00","17:50","18:40","19:30","20:20"]
-            
+
+            horarios_disponibles = [
+                "13:40", "14:30", "15:20", "16:10", "17:00", "17:50", "18:40", "19:30", "20:20"]
+
             def hora_str_to_dt(hora_str):
                 composicion = hora_str.split(":")
                 horas = int(composicion[0])
                 minutos = int(composicion[1])
                 return horas * 60 + minutos
-            
+
             inicio = hora_str_to_dt(asignacion.docente.hora_entrada)
             fin = hora_str_to_dt(asignacion.docente.hora_salida)
-            
+
             horarios = [
                 h for h in horarios_disponibles
                 if (inicio <= hora_str_to_dt(h)) and ((hora_str_to_dt(h) + 50) <= fin)
@@ -213,17 +211,11 @@ class AppHorario:
             combo_salon.set(asignacion.salon.nombre)
             combo_salon.grid(row=1, column=1)
 
-
             def validar_y_aplicar():
                 nuevo_horario = combo_horario.get()
                 nuevo_salon = combo_salon.get()
 
                 try:
-                    # # Validación de hora
-                    # if not asignacion.docente.hora_entrada <= nuevo_horario <= asignacion.docente.hora_salida:
-                    #     raise ValueError(
-                    #         "Horario fuera del rango del docente")
-
                     new_key = (nuevo_horario, nuevo_salon)
                     # Verificar si el nuevo horario y salón ya están ocupados
                     if new_key in asignaciones_map:
@@ -256,7 +248,6 @@ class AppHorario:
             ExportadorPDF.exportar_horario(asignaciones)
             messagebox.showinfo(
                 "Guardado", "Cambios guardados y exportados exitosamente.")
-            ventana.destroy()
 
         btn_editar = tk.Button(
             ventana, text="Editar selección", command=aplicar_cambio)
