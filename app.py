@@ -107,14 +107,9 @@ class AppHorario:
             messagebox.showwarning(
                 "Aviso", "Selecciona al menos un curso para continuar.")
             return
-
-        # Aquí puedes invocar el algoritmo genético con seleccionados
         self.ejecutar_algoritmo_genetico(seleccionados)
-        messagebox.showinfo(
-            "Éxito", "Horario generado y exportado exitosamente.")
 
     def ejecutar_algoritmo_genetico(self, cursos_seleccionados):
-        # Carga de archivos CSV
         base_path = "data"
         path_docentes = os.path.join(base_path, "docentes.csv")
         path_relaciones = os.path.join(base_path, "docente_curso.csv")
@@ -142,14 +137,17 @@ class AppHorario:
         print("Asignaciones generadas:")
         for asignacion in ag.mejor.asignaciones:
             print(asignacion)
-        self.mostrar_vista_edicion(ag.mejor.asignaciones)
-        
-    def mostrar_vista_edicion(self, asignaciones):
+        messagebox.showinfo(
+            "Éxito", "Horario generado y exportado exitosamente.")
+        self.mostrar_vista_edicion(ag.mejor.asignaciones, salones)
+
+    def mostrar_vista_edicion(self, asignaciones, salones):
         ventana = Toplevel()
         ventana.title("Editar Asignaciones")
         ventana.geometry("1000x500")
 
-        tree = ttk.Treeview(ventana, columns=("curso", "docente", "horario", "salon"), show="headings")
+        tree = ttk.Treeview(ventana, columns=(
+            "curso", "docente", "horario", "salon"), show="headings")
         tree.heading("curso", text="Curso")
         tree.heading("docente", text="Docente")
         tree.heading("horario", text="Horario")
@@ -175,28 +173,35 @@ class AppHorario:
 
             popup = Toplevel(ventana)
             popup.title("Editar Asignación")
+            
+            horarios =["13:40","14:30","15:20","16:10","17:00","17:50","18:40","19:30","20:20"]
 
             tk.Label(popup, text="Nuevo Horario:").grid(row=0, column=0)
-            entry_horario = tk.Entry(popup)
-            entry_horario.insert(0, str(asignacion.horario))
-            entry_horario.grid(row=0, column=1)
+            combo_horario = ttk.Combobox(popup, state="readonly")
+            combo_horario['values'] = horarios
+            combo_horario.set(asignacion.horario)
+            combo_horario.grid(row=0, column=1)
 
             tk.Label(popup, text="Nuevo Salón:").grid(row=1, column=0)
-            entry_salon = tk.Entry(popup)
-            entry_salon.insert(0, asignacion.salon.nombre)
-            entry_salon.grid(row=1, column=1)
+            combo_salon = ttk.Combobox(popup, state="readonly")
+            nombres_salones = [s.nombre for s in salones]
+            combo_salon['values'] = nombres_salones
+            combo_salon.set(asignacion.salon.nombre)
+            combo_salon.grid(row=1, column=1)
+
 
             def validar_y_aplicar():
-                nuevo_horario = entry_horario.get()
-                nuevo_salon = entry_salon.get()
+                nuevo_horario = combo_horario.get()
+                nuevo_salon = combo_salon.get()
 
                 try:
                     # Validación de hora
                     if not asignacion.docente.hora_entrada <= nuevo_horario <= asignacion.docente.hora_salida:
-                        raise ValueError("Horario fuera del rango del docente.")
+                        raise ValueError(
+                            "Horario fuera del rango del docente.")
 
                     # Validacion del salon
-                    
+
                     # Aplicar cambios
                     asignacion.horario = nuevo_horario
                     asignacion.salon.nombre = nuevo_salon
@@ -211,20 +216,23 @@ class AppHorario:
                 except Exception as e:
                     messagebox.showerror("Error", str(e))
 
-            tk.Button(popup, text="Aplicar", command=validar_y_aplicar).grid(row=2, columnspan=2, pady=10)
+            tk.Button(popup, text="Aplicar", command=validar_y_aplicar).grid(
+                row=2, columnspan=2, pady=10)
 
         def guardar_cambios():
             ExportadorExcel.exportar_horario(asignaciones)
             ExportadorPDF.exportar_horario(asignaciones)
-            messagebox.showinfo("Guardado", "Cambios guardados y exportados exitosamente.")
+            messagebox.showinfo(
+                "Guardado", "Cambios guardados y exportados exitosamente.")
             ventana.destroy()
 
-        btn_editar = tk.Button(ventana, text="Editar selección", command=aplicar_cambio)
+        btn_editar = tk.Button(
+            ventana, text="Editar selección", command=aplicar_cambio)
         btn_editar.pack(pady=5)
 
-        btn_guardar = tk.Button(ventana, text="Guardar y exportar", command=guardar_cambios)
+        btn_guardar = tk.Button(
+            ventana, text="Guardar y exportar", command=guardar_cambios)
         btn_guardar.pack(pady=5)
-
 
 
 if __name__ == "__main__":
