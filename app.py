@@ -1,3 +1,4 @@
+import datetime
 import tkinter as tk
 from tkhtmlview import HTMLLabel
 from tkinter import Toplevel, ttk, messagebox
@@ -174,7 +175,21 @@ class AppHorario:
             popup = Toplevel(ventana)
             popup.title("Editar Asignación")
             
-            horarios =["13:40","14:30","15:20","16:10","17:00","17:50","18:40","19:30","20:20"]
+            horarios_disponibles =["13:40","14:30","15:20","16:10","17:00","17:50","18:40","19:30","20:20"]
+            
+            def hora_str_to_dt(hora_str):
+                composicion = hora_str.split(":")
+                horas = int(composicion[0])
+                minutos = int(composicion[1])
+                return horas * 60 + minutos
+            
+            inicio = hora_str_to_dt(asignacion.docente.hora_entrada)
+            fin = hora_str_to_dt(asignacion.docente.hora_salida)
+            
+            horarios = [
+                h for h in horarios_disponibles
+                if (inicio <= hora_str_to_dt(h)) and ((hora_str_to_dt(h) + 50) <= fin)
+            ]
 
             tk.Label(popup, text="Nuevo Horario:").grid(row=0, column=0)
             combo_horario = ttk.Combobox(popup, state="readonly")
