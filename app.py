@@ -153,8 +153,15 @@ class AppHorario:
         tree.heading("docente", text="Docente")
         tree.heading("horario", text="Horario")
         tree.heading("salon", text="Salón")
+        
+        # Generamos un map de las asignaciones basados en el horario y salon
+        asignaciones_map = {}
 
         for asignacion in asignaciones:
+            key = (asignacion.horario, asignacion.salon.nombre)
+            if key not in asignaciones_map:
+                asignaciones_map[key] = []
+            asignaciones_map[key].append(asignacion)
             tree.insert("", "end", values=(
                 asignacion.curso.nombre,
                 asignacion.docente.nombre,
@@ -171,6 +178,8 @@ class AppHorario:
                 return
             index = tree.index(selected[0])
             asignacion = asignaciones[index]
+            
+            current_key = (asignacion.horario, asignacion.salon.nombre)
 
             popup = Toplevel(ventana)
             popup.title("Editar Asignación")
@@ -210,12 +219,20 @@ class AppHorario:
                 nuevo_salon = combo_salon.get()
 
                 try:
-                    # Validación de hora
-                    if not asignacion.docente.hora_entrada <= nuevo_horario <= asignacion.docente.hora_salida:
-                        raise ValueError(
-                            "Horario fuera del rango del docente.")
+                    # # Validación de hora
+                    # if not asignacion.docente.hora_entrada <= nuevo_horario <= asignacion.docente.hora_salida:
+                    #     raise ValueError(
+                    #         "Horario fuera del rango del docente")
 
-                    # Validacion del salon
+                    new_key = (nuevo_horario, nuevo_salon)
+                    # Verificar si el nuevo horario y salón ya están ocupados
+                    if new_key in asignaciones_map:
+                        raise ValueError(
+                            "El horario y salón ya están ocupados por otra asignación")
+                    # Actualizar el mapa de asignaciones
+                    asignaciones_map[new_key] = asignacion
+                    # Eliminar la asignación anterior del mapa
+                    del asignaciones_map[current_key]
 
                     # Aplicar cambios
                     asignacion.horario = nuevo_horario
