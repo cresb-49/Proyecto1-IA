@@ -148,20 +148,71 @@ class AppHorario:
         tree.heading("horario", text="Horario")
         tree.heading("salon", text="Salón")
 
-        # Generamos un map de las asignaciones basados en el horario y salon
-        asignaciones_map = {}
+        # Como la asignacion resultante puede tener coliciones de 3 formas:
+        # 1. Horario y salon ocupados por otra asignacion
+        # 2. Hora y Catedratico ocupados por otra asignacion
+        # 3. Salon y Catedratico ocupados por otra asignacion
+        # Se generan 3 mapas para cada una de las coliciones
+
+        map_horario_salon = {}
+        map_horario_docente = {}
+        map_salon_docente = {}
+
+        # Tag para marcar la filas con errores
+        # Diferentes colores para cada tipo de conflicto
+        # 1. Horario y salon color: lightcoral -> El horario y salon ocupados por otra asignacion
+        # 2. Horario y docente color: lightblue -> El horario y docente ocupados por otra asignacion
+        # 3. Salon y docente color: lightgreen -> El salon y docente ocupados por otra asignacion
+        tree.tag_configure('horario_salon', background='lightblue')
+        tree.tag_configure('horario_docente', background='lightgreen')
+        tree.tag_configure('salon_docente', background='lightcoral')
 
         for asignacion in asignaciones:
-            key = (asignacion.horario, asignacion.salon.nombre)
-            if key not in asignaciones_map:
-                asignaciones_map[key] = []
-            asignaciones_map[key].append(asignacion)
-            tree.insert("", "end", values=(
-                asignacion.curso.nombre,
-                asignacion.docente.nombre,
-                asignacion.horario,
-                asignacion.salon.nombre
-            ))
+            key_hs = (asignacion.horario, asignacion.salon.nombre)
+            key_hd = (asignacion.horario, asignacion.docente.registro)
+            key_sd = (asignacion.salon.nombre, asignacion.docente.registro)
+            if key_hs not in map_horario_salon:
+                map_horario_salon[key_hs] = []
+            else:
+                map_horario_salon[key_hs].append(asignacion)
+
+            if key_hd not in map_horario_docente:
+                map_horario_docente[key_hd] = []
+            else:
+                map_horario_docente[key_hd].append(asignacion)
+
+            if key_sd not in map_salon_docente:
+                map_salon_docente[key_sd] = []
+            else:
+                map_salon_docente[key_sd].append(asignacion)
+
+        for asignacion in asignaciones:
+            key_hs = (asignacion.horario, asignacion.salon.nombre)
+            key_hd = (asignacion.horario, asignacion.docente.registro)
+            key_sd = (asignacion.salon.nombre, asignacion.docente.registro)
+
+            es_conflicto1 = len(map_horario_salon[key_hs]) > 1
+            es_conflicto2 = len(map_horario_docente[key_hd]) > 1
+            es_conflicto3 = len(map_salon_docente[key_sd]) > 1
+            
+            tag_asociado = None
+            if es_conflicto1:
+                tag_asociado = 'horario_salon'
+            elif es_conflicto2:
+                tag_asociado = 'horario_docente'
+            elif es_conflicto3:
+                tag_asociado = 'salon_docente'
+
+            tree.insert(
+                "", "end",
+                values=(
+                    asignacion.curso.nombre,
+                    asignacion.docente.nombre,
+                    asignacion.horario,
+                    asignacion.salon.nombre
+                ),
+                tags=(tag_asociado,) if tag_asociado else ()
+            )
 
         tree.pack(expand=True, fill="both")
 
