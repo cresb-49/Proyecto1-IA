@@ -136,6 +136,26 @@ class AppHorario:
             "Éxito", "Horario generado y exportado exitosamente.")
         self.mostrar_vista_edicion(ag.mejor.asignaciones, salones)
 
+    def calcular_mapas(self, map_horario_salon, map_horario_docente, map_salon_docente, asignaciones):
+        for asignacion in asignaciones:
+            key_hs = (asignacion.horario, asignacion.salon.nombre)
+            key_hd = (asignacion.horario, asignacion.docente.registro)
+            key_sd = (asignacion.salon.nombre, asignacion.docente.registro)
+            if key_hs not in map_horario_salon:
+                map_horario_salon[key_hs] = []
+            else:
+                map_horario_salon[key_hs].append(asignacion)
+
+            if key_hd not in map_horario_docente:
+                map_horario_docente[key_hd] = []
+            else:
+                map_horario_docente[key_hd].append(asignacion)
+
+            if key_sd not in map_salon_docente:
+                map_salon_docente[key_sd] = []
+            else:
+                map_salon_docente[key_sd].append(asignacion)
+
     def mostrar_vista_edicion(self, asignaciones, salones):
         ventana = Toplevel()
         ventana.title("Editar Asignaciones")
@@ -167,24 +187,28 @@ class AppHorario:
         tree.tag_configure('horario_docente', background='lightgreen')
         tree.tag_configure('salon_docente', background='lightcoral')
 
-        for asignacion in asignaciones:
-            key_hs = (asignacion.horario, asignacion.salon.nombre)
-            key_hd = (asignacion.horario, asignacion.docente.registro)
-            key_sd = (asignacion.salon.nombre, asignacion.docente.registro)
-            if key_hs not in map_horario_salon:
-                map_horario_salon[key_hs] = []
-            else:
-                map_horario_salon[key_hs].append(asignacion)
+        # for asignacion in asignaciones:
+        #     key_hs = (asignacion.horario, asignacion.salon.nombre)
+        #     key_hd = (asignacion.horario, asignacion.docente.registro)
+        #     key_sd = (asignacion.salon.nombre, asignacion.docente.registro)
+        #     if key_hs not in map_horario_salon:
+        #         map_horario_salon[key_hs] = []
+        #     else:
+        #         map_horario_salon[key_hs].append(asignacion)
 
-            if key_hd not in map_horario_docente:
-                map_horario_docente[key_hd] = []
-            else:
-                map_horario_docente[key_hd].append(asignacion)
+        #     if key_hd not in map_horario_docente:
+        #         map_horario_docente[key_hd] = []
+        #     else:
+        #         map_horario_docente[key_hd].append(asignacion)
 
-            if key_sd not in map_salon_docente:
-                map_salon_docente[key_sd] = []
-            else:
-                map_salon_docente[key_sd].append(asignacion)
+        #     if key_sd not in map_salon_docente:
+        #         map_salon_docente[key_sd] = []
+        #     else:
+        #         map_salon_docente[key_sd].append(asignacion)
+
+        # Calcular los mapas de asignaciones
+        self.calcular_mapas(
+            map_horario_salon, map_horario_docente, map_salon_docente, asignaciones)
 
         for asignacion in asignaciones:
             key_hs = (asignacion.horario, asignacion.salon.nombre)
@@ -194,7 +218,7 @@ class AppHorario:
             es_conflicto1 = len(map_horario_salon[key_hs]) > 1
             es_conflicto2 = len(map_horario_docente[key_hd]) > 1
             es_conflicto3 = len(map_salon_docente[key_sd]) > 1
-            
+
             tag_asociado = None
             if es_conflicto1:
                 tag_asociado = 'horario_salon'
@@ -207,7 +231,7 @@ class AppHorario:
                 "", "end",
                 values=(
                     asignacion.curso.nombre,
-                    asignacion.docente.nombre,
+                    (asignacion.docente.nombre + " - " + asignacion.docente.registro),
                     asignacion.horario,
                     asignacion.salon.nombre
                 ),
@@ -215,6 +239,18 @@ class AppHorario:
             )
 
         tree.pack(expand=True, fill="both")
+
+        leyenda_frame = tk.Frame(ventana)
+        leyenda_frame.pack(pady=5)
+
+        tk.Label(leyenda_frame, text="Leyenda:").grid(
+            row=0, column=0, sticky="w")
+        tk.Label(leyenda_frame, text="Horario y docente en conflicto",
+                 bg="lightgreen", width=30).grid(row=1, column=0, padx=5, pady=2)
+        tk.Label(leyenda_frame, text="Horario y salón en conflicto",
+                 bg="lightblue", width=30).grid(row=1, column=1, padx=5, pady=2)
+        tk.Label(leyenda_frame, text="Salón y docente en conflicto",
+                 bg="lightcoral", width=30).grid(row=1, column=2, padx=5, pady=2)
 
         def aplicar_cambio():
             selected = tree.selection()
@@ -224,7 +260,9 @@ class AppHorario:
             index = tree.index(selected[0])
             asignacion = asignaciones[index]
 
-            current_key = (asignacion.horario, asignacion.salon.nombre)
+            current_key_hs = (asignacion.horario, asignacion.salon.nombre)
+            current_key_hd = (asignacion.horario, asignacion.docente.registro)
+            current_key_sd = (asignacion.salon.nombre, asignacion.docente.registro)
 
             popup = Toplevel(ventana)
             popup.title("Editar Asignación")
@@ -266,27 +304,72 @@ class AppHorario:
                 try:
                     new_key = (nuevo_horario, nuevo_salon)
                     # Verificar si el nuevo horario y salón ya están ocupados
-                    if new_key in asignaciones_map:
+                    if new_key in map_horario_salon:
                         raise ValueError(
                             "El horario y salón ya están ocupados por otra asignación")
-                    # Actualizar el mapa de asignaciones
-                    asignaciones_map[new_key] = asignacion
-                    # Eliminar la asignación anterior del mapa
-                    del asignaciones_map[current_key]
-
+                    # Verificar si el nuevo horario y docente ya están ocupados
+                    new_key_hd = (nuevo_horario, asignacion.docente.registro)
+                    if new_key_hd in map_horario_docente and new_key_hd != current_key_hd:
+                        raise ValueError(
+                            "El horario y docente ya están ocupados por otra asignación")
+                    # Verificar si el nuevo salón y docente ya están ocupados
+                    new_key_sd = (nuevo_salon, asignacion.docente.registro)
+                    if new_key_sd in map_salon_docente and new_key_sd != current_key_sd:
+                        raise ValueError(
+                            "El salón y docente ya están ocupados por otra asignación")
                     # Aplicar cambios
+                    # buscamos el salon en la lista de salones
+                    salon_encontrado = next(
+                        (s for s in salones if s.nombre == nuevo_salon), None)
+                    if salon_encontrado is None:
+                        raise ValueError("El salón no existe")
                     asignacion.horario = nuevo_horario
-                    asignacion.salon.nombre = nuevo_salon
+                    asignacion.salon = salon_encontrado
 
-                    tree.item(selected[0], values=(
-                        asignacion.curso.nombre,
-                        asignacion.docente.nombre,
-                        nuevo_horario,
-                        nuevo_salon
-                    ))
+                    # Recalcular mapas
+                    map_horario_salon.clear()
+                    map_horario_docente.clear()
+                    map_salon_docente.clear()
+
+                    self.calcular_mapas(
+                        map_horario_salon, map_horario_docente, map_salon_docente, asignaciones)
+
+                    for item in tree.get_children():
+                        tree.delete(item)
+
+                    for a in asignaciones:
+                        key_hs = (a.horario, a.salon.nombre)
+                        key_hd = (a.horario, a.docente.registro)
+                        key_sd = (a.salon.nombre, a.docente.registro)
+
+                        es_conflicto1 = len(map_horario_salon[key_hs]) > 1
+                        es_conflicto2 = len(map_horario_docente[key_hd]) > 1
+                        es_conflicto3 = len(map_salon_docente[key_sd]) > 1
+
+                        tag_asociado = None
+                        if es_conflicto1:
+                            tag_asociado = 'horario_salon'
+                        elif es_conflicto2:
+                            tag_asociado = 'horario_docente'
+                        elif es_conflicto3:
+                            tag_asociado = 'salon_docente'
+
+                        tree.insert(
+                            "", "end",
+                            values=(
+                                a.curso.nombre,
+                                (a.docente.nombre + " - " + a.docente.registro),
+                                a.horario,
+                                a.salon.nombre
+                            ),
+                            tags=(tag_asociado,) if tag_asociado else ()
+                        )
                     popup.destroy()
                 except Exception as e:
                     messagebox.showerror("Error", str(e))
+                    # Lanzar traza para depuración
+                    import traceback
+                    traceback.print_exc()
 
             tk.Button(popup, text="Aplicar", command=validar_y_aplicar).grid(
                 row=2, columnspan=2, pady=10)
