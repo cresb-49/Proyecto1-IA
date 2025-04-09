@@ -132,9 +132,6 @@ class AppHorario:
         # Exportar el horario generado
         ExportadorExcel.exportar_horario(ag.mejor.asignaciones)
         ExportadorPDF.exportar_horario(ag.mejor.asignaciones)
-        print("Asignaciones generadas:")
-        for asignacion in ag.mejor.asignaciones:
-            print(asignacion)
         messagebox.showinfo(
             "Éxito", "Horario generado y exportado exitosamente.")
         self.mostrar_vista_edicion(ag.mejor.asignaciones, salones)

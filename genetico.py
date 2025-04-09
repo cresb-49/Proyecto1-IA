@@ -126,6 +126,11 @@ class AlgoritmoGenetico:
             self.mejores_generaciones.append(self.mejor)
             self.seleccionar_cruzar_mutar()
             print(f"Gen {gen+1}, mejor aptitud: {self.mejor.aptitud}")
+            
+        # De los mejores horarios, seleccionamos el mejor es el que tiene
+        # la mejor aptitud de todas las generaciones
+        self.mejores_generaciones.sort(key=lambda h: h.aptitud, reverse=True)
+        self.mejor = self.mejores_generaciones[0]
 
     def cruzar(self, padre1: Horario, padre2: Horario) -> Horario:
         punto_corte = random.randint(1, len(padre1.asignaciones) - 1)

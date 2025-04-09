@@ -2,6 +2,7 @@ from jinja2 import Template
 from pdfkit.api import configuration
 import pdfkit
 import platform
+from weasyprint import HTML
 
 
 class ExportadorPDF:
@@ -22,30 +23,57 @@ class ExportadorPDF:
         <head>
           <meta charset="UTF-8">
           <style>
-            body { font-family: Arial, sans-serif; }
-            table { border-collapse: collapse; width: 100%; }
-            th, td { border: 1px solid #ccc; text-align: center; padding: 6px; font-size: 11px; }
-            th { background-color: #f2f2f2; }
+            @page {
+              size: A4 landscape;
+              margin: 1cm;
+            }
+            body {
+              font-family: Arial, sans-serif;
+              margin: 0;
+              padding: 0;
+            }
+            .escalado {
+              transform: scale(0.75); /* Ajusta según necesidad */
+              transform-origin: top left;
+            }
+            table {
+              border-collapse: collapse;
+              width: 100%;
+              table-layout: fixed;
+            }
+            th, td {
+              border: 1px solid #ccc;
+              min-width: 120px;
+              text-align: center;
+              padding: 6px;
+              font-size: 10px;
+              word-wrap: break-word;
+            }
+            th {
+              background-color: #f2f2f2;
+            }
           </style>
         </head>
         <body>
           <h2>Horario de Clases</h2>
-          <table>
-            <tr>
-              <th>Hora</th>
-              {% for salon in salones %}
-              <th>{{ salon }}</th>
+          <div class="escalado">
+            <table>
+              <tr>
+                <th>Hora</th>
+                {% for salon in salones %}
+                <th>{{ salon }}</th>
+                {% endfor %}
+              </tr>
+              {% for hora in horarios %}
+              <tr>
+                <td>{{ hora }}</td>
+                {% for salon in salones %}
+                <td>{{ tabla[hora][salon]|safe }}</td>
+                {% endfor %}
+              </tr>
               {% endfor %}
-            </tr>
-            {% for hora in horarios %}
-            <tr>
-              <td>{{ hora }}</td>
-              {% for salon in salones %}
-              <td>{{ tabla[hora][salon]|safe }}</td>
-              {% endfor %}
-            </tr>
-            {% endfor %}
-          </table>
+            </table>
+          </div>
         </body>
         </html>
         """)
@@ -71,3 +99,6 @@ class ExportadorPDF:
             pdfkit.from_file("horario_generado.html", nombre_pdf+".pdf",
                              configuration=wkhtml_config)
             print(f"PDF generado: {nombre_pdf}")
+        elif sysos == "Darwin":
+            HTML("horario_generado.html").write_pdf(
+                (nombre_pdf+".pdf"))
