@@ -2,6 +2,7 @@ from clases import Curso, Docente, Salon, Asignacion, RelacionDocenteCurso
 from typing import List, Dict, Tuple
 import random
 
+
 class Horario:
     def __init__(self, asignaciones: List[Asignacion]):
         self.asignaciones = asignaciones
@@ -10,7 +11,7 @@ class Horario:
     def calcular_aptitud(self):
         conflictos = self.contar_conflictos()
         bonus = self.contar_bonus()
-        self.aptitud = bonus - (10 * conflictos)  # peso 10 por conflicto
+        self.aptitud = bonus - conflictos
         return self.aptitud
 
     def contar_conflictos(self):
@@ -73,7 +74,8 @@ class AlgoritmoGenetico:
         self.salones = salones
         self.relaciones = relaciones
         self.generaciones = generaciones
-        self.poblacion = []
+        self.poblacion: List[Horario] = []
+        self.mejores_generaciones: List[Horario] = []
         self.mejor = None
         self.tamano_poblacion = poblacion_inicial
 
@@ -114,11 +116,14 @@ class AlgoritmoGenetico:
         return slots_validos
 
     def evolucionar(self):
+        # calculamos aptitud de la poblacion inicial
+        # Ordenamos del mas cer
         for gen in range(self.generaciones):
             for horario in self.poblacion:
                 horario.calcular_aptitud()
             self.poblacion.sort(key=lambda h: h.aptitud, reverse=True)
             self.mejor = self.poblacion[0]
+            self.mejores_generaciones.append(self.mejor)
             self.seleccionar_cruzar_mutar()
             print(f"Gen {gen+1}, mejor aptitud: {self.mejor.aptitud}")
 
@@ -129,12 +134,17 @@ class AlgoritmoGenetico:
         return Horario(hijo_asigs)
 
     def seleccionar_cruzar_mutar(self):
-        # elitismo: mantener los 10 mejores
-        nueva_poblacion = self.poblacion[:10]
+        # Aplicamos elitismo, mantenemos los mejores el 20% de la poblacion
+        # y cruzamos el resto
+        cantidad_elitismo = int(self.tamano_poblacion * 0.2)
+        nueva_poblacion = self.poblacion[:cantidad_elitismo]
 
         while len(nueva_poblacion) < self.tamano_poblacion:
-            # torneo entre top 30
-            padres = random.sample(self.poblacion[:30], 2)
+            # seleccionamos 2 padres aleatorios de la poblacion
+            # Se toma el 60% de la poblacion ordenada
+            # del mejor al peor
+            cantidad_padres = int(self.tamano_poblacion * 0.6)
+            padres = random.sample(self.poblacion[:cantidad_padres], 2)
             hijo = self.cruzar(padres[0], padres[1])
             self.mutar(hijo)
             nueva_poblacion.append(hijo)
