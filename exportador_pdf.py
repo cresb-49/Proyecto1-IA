@@ -2,8 +2,6 @@ from jinja2 import Template
 from pdfkit.api import configuration
 import pdfkit
 import platform
-from weasyprint import HTML
-
 
 class ExportadorPDF:
     @staticmethod
@@ -100,5 +98,6 @@ class ExportadorPDF:
                              configuration=wkhtml_config)
             print(f"PDF generado: {nombre_pdf}")
         elif sysos == "Darwin":
+            from weasyprint import HTML
             HTML("horario_generado.html").write_pdf(
                 (nombre_pdf+".pdf"))
