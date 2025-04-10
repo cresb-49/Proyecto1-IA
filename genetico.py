@@ -90,6 +90,7 @@ class AlgoritmoGenetico:
         self.poblacion: List[Horario] = []
         self.mejores_generaciones: List[Horario] = []
         self.historial_completo: List[Horario] = []
+        self.historial_aptitudes: List[float] = []
         self.mejor = None
         self.tamano_poblacion = poblacion_inicial
         # Variables de resultado de rendimiento del algoritmo
@@ -147,6 +148,7 @@ class AlgoritmoGenetico:
                 # Guardamos el horario en el historial completo para graficar
                 # la funcion de aptitud
                 self.historial_completo.append(horario)
+                self.historial_aptitudes.append(horario.aptitud)
                 # Calculos para el reporte de estadisticas
                 self.cantidad_promedio_aptitud += horario.aptitud
                 self.cantidad_promedio_conflictos += horario.cantidad_conflictos

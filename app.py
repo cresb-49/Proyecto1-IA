@@ -285,6 +285,7 @@ class AppHorario:
         tk.Label(resultados_frame, text=f"Cantidad PC: {algoritmo_genetico.cantidad_promedio_conflictos}").grid(row=1, column=0, padx=10, sticky="w")
         tk.Label(resultados_frame, text=f"Cantidad PB: {algoritmo_genetico.cantidad_promedio_bonus}").grid(row=1, column=1, padx=10, sticky="w")
         tk.Label(resultados_frame, text=f"Cantidad PA: {algoritmo_genetico.cantidad_promedio_aptitud}").grid(row=1, column=2, padx=10, sticky="w")
+        tk.Label(resultados_frame, text=f"Iteraciones Realizadas: {len(algoritmo_genetico.historial_aptitudes)}").grid(row=2, column=0, padx=10, sticky="w")
         
 
         def aplicar_cambio():
@@ -425,6 +426,37 @@ class AppHorario:
         btn_guardar = tk.Button(
             boton_frame, text="Guardar y exportar", command=guardar_cambios)
         btn_guardar.pack(side="left", padx=10)
+
+        btn_grafica_aptitud = tk.Button(
+            boton_frame, text="Gráfica de Aptitud", command=lambda: self.graficar_aptitud(algoritmo_genetico))
+        btn_grafica_aptitud.pack(side="left", padx=10)
+
+        btn_porcentajes_cursos_continuos = tk.Button(
+            boton_frame, text="Porcentaje Cursos Continuos", command=lambda: self.mostrar_porcentaje_cursos_continuos(asignaciones))
+        btn_porcentajes_cursos_continuos.pack(side="left", padx=10)
+    
+    def mostrar_porcentaje_cursos_continuos(self, asignaciones):
+        pass
+
+    def graficar_aptitud(self, algoritmo_genetico:AlgoritmoGenetico):
+        import matplotlib.pyplot as plt
+        from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
+
+        ventana_grafica = Toplevel(self.root)
+        ventana_grafica.title("Evolución de la Aptitud")
+        ventana_grafica.geometry("600x400")
+
+        fig, ax = plt.subplots(figsize=(6, 3.5))
+        horarios = list(range(1, len(algoritmo_genetico.historial_aptitudes) + 1))
+        ax.plot(horarios, algoritmo_genetico.historial_aptitudes, marker='o', color='blue')
+        ax.set_title("Aptitudes Obtenidas en Algoritmo Genético")
+        ax.set_xlabel("Horarios Generados")
+        ax.set_ylabel("Aptitud")
+        ax.grid(True)
+
+        canvas = FigureCanvasTkAgg(fig, master=ventana_grafica)
+        canvas.draw()
+        canvas.get_tk_widget().pack(fill="both", expand=True)
 
 
 if __name__ == "__main__":
