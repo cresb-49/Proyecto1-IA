@@ -130,6 +130,13 @@ class AlgoritmoGenetico:
         # De los mejores horarios, seleccionamos el mejor es el que tiene
         # la mejor aptitud de todas las generaciones
         self.mejores_generaciones.sort(key=lambda h: h.aptitud, reverse=True)
+
+        # Tomamos el mejor horario de todas las generaciones
+        # A esta eleccion de solucion "optima" se le llama elitismo intergeneracional
+        # Ya que tenemos un registro de los mejores horarios de cada generacion
+        # y tomamos el mejor de todos en este caso es el que mostrara menos conflictos
+        # debido a la funcion de aptitud planteada de conflictos y bonus
+        # aptitud = bonus - conflictos
         self.mejor = self.mejores_generaciones[0]
 
     def cursos_conflicto(self,asignaciones):
