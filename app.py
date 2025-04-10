@@ -288,6 +288,7 @@ class AppHorario:
         tk.Label(resultados_frame, text=f"Cantidad PB: {algoritmo_genetico.cantidad_promedio_bonus}").grid(row=1, column=1, padx=10, sticky="w")
         tk.Label(resultados_frame, text=f"Cantidad PA: {algoritmo_genetico.cantidad_promedio_aptitud}").grid(row=1, column=2, padx=10, sticky="w")
         tk.Label(resultados_frame, text=f"Iteraciones Realizadas: {len(algoritmo_genetico.historial_aptitudes)}").grid(row=2, column=0, padx=10, sticky="w")
+        tk.Label(resultados_frame, text=f"Aptitud del Actual Horario: {algoritmo_genetico.mejor.aptitud}").grid(row=2, column=1, padx=10, sticky="w")
         
 
         def aplicar_cambio():
