@@ -7,10 +7,14 @@ class Horario:
     def __init__(self, asignaciones: List[Asignacion]):
         self.asignaciones = asignaciones
         self.aptitud = 0
+        self.cantidad_conflictos = 0
+        self.cantidad_bonus = 0
 
     def calcular_aptitud(self):
         conflictos = self.contar_conflictos()
         bonus = self.contar_bonus()
+        self.cantidad_conflictos = conflictos
+        self.cantidad_bonus = bonus
         self.aptitud = bonus - conflictos
         return self.aptitud
 
@@ -76,8 +80,17 @@ class AlgoritmoGenetico:
         self.generaciones = generaciones
         self.poblacion: List[Horario] = []
         self.mejores_generaciones: List[Horario] = []
+        self.historial_completo: List[Horario] = []
         self.mejor = None
         self.tamano_poblacion = poblacion_inicial
+        # Variables de resultado de rendimiento del algoritmo
+        self.tiempo_total = 0
+        self.cantidad_promedio_conflictos = 0
+        self.cantidad_promedio_bonus = 0
+        self.cantidad_promedio_aptitud = 0
+        self.contador_promedios = 0
+        self.uso_ram = 0
+        self.pico_ram = 0
 
     def generar_poblacion_inicial(self):
         for _ in range(self.tamano_poblacion):
@@ -121,6 +134,18 @@ class AlgoritmoGenetico:
         for gen in range(self.generaciones):
             for horario in self.poblacion:
                 horario.calcular_aptitud()
+                # Guardamos el horario en el historial completo para graficar
+                # la funcion de aptitud
+                self.historial_completo.append(horario)
+                # Calculos para el reporte de estadisticas
+                self.cantidad_promedio_aptitud += horario.aptitud
+                self.cantidad_promedio_conflictos += horario.cantidad_conflictos
+                self.cantidad_promedio_bonus += horario.cantidad_bonus
+                self.contador_promedios += 1
+                self.cantidad_promedio_aptitud = self.cantidad_promedio_aptitud / self.contador_promedios
+                self.cantidad_promedio_conflictos = self.cantidad_promedio_conflictos / self.contador_promedios
+                self.cantidad_promedio_bonus = self.cantidad_promedio_bonus / self.contador_promedios
+
             self.poblacion.sort(key=lambda h: h.aptitud, reverse=True)
             self.mejor = self.poblacion[0]
             self.mejores_generaciones.append(self.mejor)

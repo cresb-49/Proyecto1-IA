@@ -1,4 +1,5 @@
-import datetime
+import time
+import tracemalloc
 import tkinter as tk
 from tkhtmlview import HTMLLabel
 from tkinter import Toplevel, ttk, messagebox
@@ -126,15 +127,23 @@ class AppHorario:
             poblacion_inicial=100
         )
 
+        inicio = time.time()
+        tracemalloc.start()
         ag.generar_poblacion_inicial()
         ag.evolucionar()
+        fin = time.time()
+        current, peak = tracemalloc.get_traced_memory()
+        tracemalloc.stop()
+        ag.tiempo_total = fin - inicio
+        ag.uso_ram = f"{current / 1024:.2f} KB"
+        ag.pico_ram = f"{peak / 1024:.2f} KB"
 
         # Exportar el horario generado
         ExportadorExcel.exportar_horario(ag.mejor.asignaciones)
         ExportadorPDF.exportar_horario(ag.mejor.asignaciones)
         messagebox.showinfo(
             "Éxito", "Horario generado y exportado exitosamente.")
-        self.mostrar_vista_edicion(ag.mejor.asignaciones, salones)
+        self.mostrar_vista_edicion(ag.mejor.asignaciones, salones,ag)
 
     def calcular_mapas(self, map_horario_salon, map_horario_docente, map_salon_docente, asignaciones):
         for asignacion in asignaciones:
@@ -156,7 +165,7 @@ class AppHorario:
             else:
                 map_salon_docente[key_sd].append(asignacion)
 
-    def mostrar_vista_edicion(self, asignaciones, salones):
+    def mostrar_vista_edicion(self, asignaciones, salones,algoritmo_genetico:AlgoritmoGenetico):
         ventana = Toplevel()
         ventana.title("Editar Asignaciones")
         ventana.geometry("1000x500")
@@ -251,6 +260,19 @@ class AppHorario:
                  bg="lightblue", width=30).grid(row=1, column=1, padx=5, pady=2)
         tk.Label(leyenda_frame, text="Salón y docente en conflicto",
                  bg="lightcoral", width=30).grid(row=1, column=2, padx=5, pady=2)
+        
+        # Información del algoritmo
+        resultados_frame = tk.Frame(ventana)
+        resultados_frame.pack(pady=10)
+
+        tk.Label(resultados_frame, text=f"Generaciones: {algoritmo_genetico.generaciones}").grid(row=0, column=0, padx=10, sticky="w")
+        tk.Label(resultados_frame, text=f"Tiempo: {algoritmo_genetico.tiempo_total} s").grid(row=0, column=1, padx=10, sticky="w")
+        tk.Label(resultados_frame, text=f"RAM usada: {algoritmo_genetico.uso_ram}").grid(row=0, column=2, padx=10, sticky="w")
+        tk.Label(resultados_frame, text=f"Pico RAM: {algoritmo_genetico.pico_ram}").grid(row=0, column=3, padx=10, sticky="w")
+        tk.Label(resultados_frame, text=f"Cantidad PC: {algoritmo_genetico.cantidad_promedio_conflictos}").grid(row=1, column=0, padx=10, sticky="w")
+        tk.Label(resultados_frame, text=f"Cantidad PB: {algoritmo_genetico.cantidad_promedio_bonus}").grid(row=1, column=1, padx=10, sticky="w")
+        tk.Label(resultados_frame, text=f"Cantidad PA: {algoritmo_genetico.cantidad_promedio_aptitud}").grid(row=1, column=2, padx=10, sticky="w")
+        
 
         def aplicar_cambio():
             selected = tree.selection()
@@ -380,13 +402,16 @@ class AppHorario:
             messagebox.showinfo(
                 "Guardado", "Cambios guardados y exportados exitosamente.")
 
+        boton_frame = tk.Frame(ventana)
+        boton_frame.pack(pady=10)
+
         btn_editar = tk.Button(
-            ventana, text="Editar selección", command=aplicar_cambio)
-        btn_editar.pack(pady=5)
+            boton_frame, text="Editar selección", command=aplicar_cambio)
+        btn_editar.pack(side="left", padx=10)
 
         btn_guardar = tk.Button(
-            ventana, text="Guardar y exportar", command=guardar_cambios)
-        btn_guardar.pack(pady=5)
+            boton_frame, text="Guardar y exportar", command=guardar_cambios)
+        btn_guardar.pack(side="left", padx=10)
 
 
 if __name__ == "__main__":
