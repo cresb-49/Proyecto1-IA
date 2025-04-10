@@ -106,6 +106,7 @@ class AppHorario:
             messagebox.showwarning(
                 "Aviso", "Selecciona al menos un curso para continuar.")
             return
+        print(f"Se han seleccionado {len(seleccionados)} cursos.")
         self.ejecutar_algoritmo_genetico(seleccionados)
 
     def ejecutar_algoritmo_genetico(self, cursos_seleccionados):
@@ -118,8 +119,20 @@ class AppHorario:
         relaciones = CargadorDatos.cargar_relaciones(path_relaciones)
         salones = CargadorDatos.cargar_salones(path_salones)
 
+        cursos_validos_seleccionados = []
+        cursos_no_validos_seleccionados = []
+
+        for curso in cursos_seleccionados:
+            posibles_docentes = relaciones.docentes_para(curso.codigo)
+            if posibles_docentes:
+                cursos_validos_seleccionados.append(curso)
+            else:
+                cursos_no_validos_seleccionados.append(curso)
+        print(f"Se han seleccionado {len(cursos_validos_seleccionados)} cursos validos.")
+        print(f"Se han seleccionado {len(cursos_no_validos_seleccionados)} cursos no validos.")
+
         ag = AlgoritmoGenetico(
-            cursos=cursos_seleccionados,
+            cursos=cursos_validos_seleccionados,
             docentes=docentes,
             salones=salones,
             relaciones=relaciones,

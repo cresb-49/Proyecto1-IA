@@ -33,9 +33,17 @@ class CargadorDatos:
 
     def cargar_cursos(path: str) -> List[Curso]:
         cursos = []
+        cursos_vistos = set()
+        # Se permite la carga de cursos con el mismo codigo pero cond diferente seccion
+
         with open(path, newline='', encoding='utf-8') as f:
             reader = csv.DictReader(f)
             for row in reader:
+                key = (row['codigo'], row['seccion'])
+                if key in cursos_vistos:
+                    print(f"El curso {row['codigo']} ya fue cargado, se omitirá la carga de este curso.")
+                    continue
+                cursos_vistos.add(key)
                 curso = Curso(
                     codigo=row['codigo'],
                     nombre=row['nombre'],
@@ -45,6 +53,7 @@ class CargadorDatos:
                     tipo=row['tipo']
                 )
                 cursos.append(curso)
+        print(f"Se han cargado {len(cursos)} cursos.")
         return cursos
 
     def cargar_relaciones(path: str) -> RelacionDocenteCurso:

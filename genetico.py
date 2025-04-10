@@ -77,6 +77,12 @@ class Horario:
 class AlgoritmoGenetico:
     def __init__(self, cursos, docentes, salones, relaciones, generaciones=100, poblacion_inicial=50):
         self.cursos = cursos
+        self.keys_cursos = set()
+        for curso in cursos:
+            key = (curso.codigo, curso.seccion)
+            self.keys_cursos.add(key)
+        print(f"Hay cargados {len(self.cursos)} cursos")
+        print(f"Se han creado {len(self.keys_cursos)} keys de cursos")
         self.docentes = docentes
         self.salones = salones
         self.relaciones = relaciones
@@ -110,6 +116,7 @@ class AlgoritmoGenetico:
                     continue
                 horario = random.choice(horarios_validos)
                 asignaciones.append(Asignacion(curso, docente, salon, horario))
+            print(f"Se han generado {len(asignaciones)} asignaciones")
             self.poblacion.append(Horario(asignaciones))
 
     def convertir_a_minutos(self, hora: str) -> int:
@@ -277,6 +284,8 @@ class AlgoritmoGenetico:
 
         hijo_asigs = []
         cursos_usados = set()
+        #copiamos el set original de keys de cursos y le quitamos los que ya tenemos
+        copias_keys = set(self.keys_cursos)
 
         # Copiar segmento medio del padre1
         for i in range(p1, p2 + 1):
@@ -288,13 +297,28 @@ class AlgoritmoGenetico:
                 continue
             cursos_usados.add(key)
 
-        # Completar desde padre2 evitando duplicados
-        for asignacion in padre2.asignaciones:
-            key = (asignacion.curso.codigo, asignacion.curso.seccion)
-            if key in cursos_usados:
-                continue
-            hijo_asigs.append(asignacion)
-            cursos_usados.add(asignacion.curso.codigo)
+        # Obtenemos las keys faltantes
+        mising_keys = copias_keys - cursos_usados
+
+
+        # buscamos en base a las keys faltantes
+        for key in mising_keys:
+            # Buscamos en padre1
+            for asignacion in padre2.asignaciones:
+                if (asignacion.curso.codigo, asignacion.curso.seccion) == key:
+                    hijo_asigs.append(asignacion)
+                    cursos_usados.add(key)
+                    break
+        
+        mising_keys = copias_keys - cursos_usados
+
+        # # Completar desde padre2 evitando duplicados
+        # for asignacion in padre2.asignaciones:
+        #     key = (asignacion.curso.codigo, asignacion.curso.seccion)
+        #     if key in cursos_usados:
+        #         continue
+        #     hijo_asigs.append(asignacion)
+        #     cursos_usados.add(asignacion.curso.codigo)
 
         return Horario(hijo_asigs)
 
