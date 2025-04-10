@@ -433,6 +433,10 @@ class AppHorario:
             boton_frame, text="Gráfica de Aptitud", command=lambda: self.graficar_aptitud(algoritmo_genetico))
         btn_grafica_aptitud.pack(side="left", padx=10)
 
+        btn_grafica_mejores_aptitudes = tk.Button(
+            boton_frame, text="Gráfica Mejores Aptitudes", command=lambda: self.graficar_mejores_aptitudes(algoritmo_genetico))
+        btn_grafica_mejores_aptitudes.pack(side="left", padx=10)
+
         btn_porcentajes_cursos_continuos = tk.Button(
             boton_frame, text="Porcentaje Cursos Continuos", command=lambda: self.mostrar_porcentaje_cursos_continuos(asignaciones))
         btn_porcentajes_cursos_continuos.pack(side="left", padx=10)
@@ -501,22 +505,59 @@ class AppHorario:
         import matplotlib.pyplot as plt
         from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 
+        aptitudes_por_generacion = algoritmo_genetico.historial_aptitudes_generaciones
+
+        ventana_grafica = Toplevel(self.root)
+        ventana_grafica.title("Gráfica de Aptitudes por Generación")
+        ventana_grafica.geometry("700x450")
+
+        claves = list(aptitudes_por_generacion.keys())
+        clave_seleccionada = tk.StringVar(value=claves[0])
+        selector = ttk.Combobox(ventana_grafica, values=claves, textvariable=clave_seleccionada, state="readonly")
+        selector.pack(pady=10)
+
+        fig, ax = plt.subplots(figsize=(6, 3.5))
+        canvas = FigureCanvasTkAgg(fig, master=ventana_grafica)
+        canvas.draw()
+        canvas.get_tk_widget().pack(fill="both", expand=True)
+
+        def actualizar_grafico(datos:List[float],generacion:int):
+            ax.clear()
+            if datos:
+                x = list(range(1, len(datos) + 1))
+                ax.plot(x, datos, marker='o', color='blue')
+                ax.set_title(f"Generacion: {generacion}")
+                ax.set_xlabel("Iteraciones")
+                ax.set_ylabel("Aptitud")
+                ax.grid(True)
+            else:
+                ax.set_title(f"Sin datos para: {generacion}")
+            canvas.draw()
+
+        selector.bind("<<ComboboxSelected>>", lambda event: actualizar_grafico(aptitudes_por_generacion[clave_seleccionada.get()], clave_seleccionada.get()))
+
+        # Mostrar primera clave
+        actualizar_grafico(aptitudes_por_generacion[claves[0]], claves[0])
+
+    def graficar_mejores_aptitudes(self, algoritmo_genetico:AlgoritmoGenetico):
+        import matplotlib.pyplot as plt
+        from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
+
         ventana_grafica = Toplevel(self.root)
         ventana_grafica.title("Evolución de la Aptitud")
         ventana_grafica.geometry("600x400")
 
         fig, ax = plt.subplots(figsize=(6, 3.5))
-        horarios = list(range(1, len(algoritmo_genetico.historial_aptitudes) + 1))
-        ax.plot(horarios, algoritmo_genetico.historial_aptitudes, marker='o', color='blue')
-        ax.set_title("Aptitudes Obtenidas en Algoritmo Genético")
-        ax.set_xlabel("Horarios Generados")
+        horarios = list(range(1, len(algoritmo_genetico.aptitudes_mejores_generaciones) + 1))
+        ax.plot(horarios, algoritmo_genetico.aptitudes_mejores_generaciones, marker='o', color='blue')
+        ax.set_title("Mejores Apttitudes por Generacion")
+        ax.set_xlabel("Generacion")
         ax.set_ylabel("Aptitud")
         ax.grid(True)
 
         canvas = FigureCanvasTkAgg(fig, master=ventana_grafica)
         canvas.draw()
         canvas.get_tk_widget().pack(fill="both", expand=True)
-
 
 if __name__ == "__main__":
     root = tk.Tk()

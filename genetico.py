@@ -89,8 +89,10 @@ class AlgoritmoGenetico:
         self.generaciones = generaciones
         self.poblacion: List[Horario] = []
         self.mejores_generaciones: List[Horario] = []
+        self.aptitudes_mejores_generaciones: List[float] = []
         self.historial_completo: List[Horario] = []
         self.historial_aptitudes: List[float] = []
+        self.historial_aptitudes_generaciones: Dict[int, List[float]] = {}
         self.mejor = None
         self.tamano_poblacion = poblacion_inicial
         # Variables de resultado de rendimiento del algoritmo
@@ -143,12 +145,15 @@ class AlgoritmoGenetico:
         # calculamos aptitud de la poblacion inicial
         # Ordenamos del mas cer
         for gen in range(self.generaciones):
+            # Generamos la clave para el historial de aptitudes
+            self.historial_aptitudes_generaciones[f"{gen}"] = []
             for horario in self.poblacion:
                 horario.calcular_aptitud()
                 # Guardamos el horario en el historial completo para graficar
                 # la funcion de aptitud
                 self.historial_completo.append(horario)
                 self.historial_aptitudes.append(horario.aptitud)
+                self.historial_aptitudes_generaciones[f"{gen}"].append(horario.aptitud)
                 # Calculos para el reporte de estadisticas
                 self.cantidad_promedio_aptitud += horario.aptitud
                 self.cantidad_promedio_conflictos += horario.cantidad_conflictos
@@ -161,6 +166,7 @@ class AlgoritmoGenetico:
             self.poblacion.sort(key=lambda h: h.aptitud, reverse=True)
             self.mejor = self.poblacion[0]
             self.mejores_generaciones.append(self.mejor.copy())
+            self.aptitudes_mejores_generaciones.append(self.mejor.aptitud)
             print(f"Gen {gen+1}, mejor aptitud: {self.mejor.aptitud}")
             # print(f"Gen {gen+1}, mejor horario: {len(self.mejor.asignaciones)}")
             self.seleccionar_cruzar_mutar()
