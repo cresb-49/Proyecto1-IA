@@ -142,7 +142,7 @@ class AppHorario:
         ExportadorExcel.exportar_horario(ag.mejor.asignaciones)
         ExportadorPDF.exportar_horario(ag.mejor.asignaciones)
         messagebox.showinfo(
-            "Éxito", "Horario generado y exportado exitosamente.")
+            "Éxito", "Horario generado y exportado exitosamente, con una funcion de aptitud de: " + str(ag.mejor.aptitud))
         self.mostrar_vista_edicion(ag.mejor.asignaciones, salones,ag)
 
     def calcular_mapas(self, map_horario_salon, map_horario_docente, map_salon_docente, asignaciones):

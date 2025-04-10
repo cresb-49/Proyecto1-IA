@@ -1,6 +1,7 @@
 from clases import Curso, Docente, Salon, Asignacion, RelacionDocenteCurso
 from typing import List, Dict, Tuple
 import random
+import copy
 
 
 class Horario:
@@ -70,6 +71,8 @@ class Horario:
         h, m = map(int, hora.split(":"))
         return h * 60 + m
 
+    def copy(self):
+        return copy.deepcopy(self)
 
 class AlgoritmoGenetico:
     def __init__(self, cursos, docentes, salones, relaciones, generaciones=100, poblacion_inicial=50):
@@ -148,9 +151,9 @@ class AlgoritmoGenetico:
 
             self.poblacion.sort(key=lambda h: h.aptitud, reverse=True)
             self.mejor = self.poblacion[0]
-            self.mejores_generaciones.append(self.mejor)
-            self.seleccionar_cruzar_mutar()
+            self.mejores_generaciones.append(self.mejor.copy())
             print(f"Gen {gen+1}, mejor aptitud: {self.mejor.aptitud}")
+            self.seleccionar_cruzar_mutar()
             
         # De los mejores horarios, seleccionamos el mejor es el que tiene
         # la mejor aptitud de todas las generaciones
@@ -262,6 +265,37 @@ class AlgoritmoGenetico:
         hijo_asigs = padre1.asignaciones[:punto_corte] + \
             padre2.asignaciones[punto_corte:]
         return Horario(hijo_asigs)
+    
+    def cruzarConDosPuntos(self, padre1: Horario, padre2: Horario) -> Horario:
+        """
+        Cruce con dos puntos de corte que preserva unicidad de cursos.
+        Se copia un segmento intermedio del padre1 y se completa desde el padre2.
+        """
+        total = len(padre1.asignaciones)
+        p1, p2 = sorted(random.sample(range(total), 2))  # dos puntos distintos
+
+        hijo_asigs = []
+        cursos_usados = set()
+
+        # Copiar segmento medio del padre1
+        for i in range(p1, p2 + 1):
+            asignacion = padre1.asignaciones[i]
+            hijo_asigs.append(asignacion)
+            # Un curso repetido es el codigo del curso y la seccion
+            key = (asignacion.curso.codigo, asignacion.curso.seccion)
+            if key in cursos_usados:
+                continue
+            cursos_usados.add(key)
+
+        # Completar desde padre2 evitando duplicados
+        for asignacion in padre2.asignaciones:
+            key = (asignacion.curso.codigo, asignacion.curso.seccion)
+            if key in cursos_usados:
+                continue
+            hijo_asigs.append(asignacion)
+            cursos_usados.add(asignacion.curso.codigo)
+
+        return Horario(hijo_asigs)
 
     def seleccionar_cruzar_mutar(self):
         # Aplicamos elitismo, mantenemos los mejores el 20% de la poblacion
@@ -275,7 +309,7 @@ class AlgoritmoGenetico:
             # del mejor al peor
             cantidad_padres = int(self.tamano_poblacion * 0.6)
             padres = random.sample(self.poblacion[:cantidad_padres], 2)
-            hijo = self.cruzarFaltante(padres[0], padres[1])
+            hijo = self.cruzarConDosPuntos(padres[0], padres[1])
             self.mutar(hijo)
             nueva_poblacion.append(hijo)
 
