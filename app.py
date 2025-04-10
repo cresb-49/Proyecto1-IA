@@ -6,6 +6,8 @@ from tkinter import Toplevel, ttk, messagebox
 from clases import Curso
 from carga import CargadorDatos
 import os
+from clases import Asignacion
+from typing import List
 
 from exportador_excel import ExportadorExcel
 from exportador_pdf import ExportadorPDF
@@ -178,7 +180,7 @@ class AppHorario:
             else:
                 map_salon_docente[key_sd].append(asignacion)
 
-    def mostrar_vista_edicion(self, asignaciones, salones,algoritmo_genetico:AlgoritmoGenetico):
+    def mostrar_vista_edicion(self, asignaciones:List[Asignacion], salones,algoritmo_genetico:AlgoritmoGenetico):
         ventana = Toplevel()
         ventana.title("Editar Asignaciones")
         ventana.geometry("1000x500")
@@ -435,8 +437,65 @@ class AppHorario:
             boton_frame, text="Porcentaje Cursos Continuos", command=lambda: self.mostrar_porcentaje_cursos_continuos(asignaciones))
         btn_porcentajes_cursos_continuos.pack(side="left", padx=10)
     
-    def mostrar_porcentaje_cursos_continuos(self, asignaciones):
-        pass
+    def mostrar_porcentaje_cursos_continuos(self, asignaciones:List[Asignacion]):
+        # Contamos la cantidad de cursos que hay por ingenieria
+        cursos_por_carrera = {}
+        continuos_por_carrera = {}
+        asignaciones_carrera = {}
+        for asignacion in asignaciones:
+            carrera = asignacion.curso.carrera
+            if carrera not in cursos_por_carrera:
+                cursos_por_carrera[carrera] = 0
+                asignaciones_carrera[carrera] = []
+            asignaciones_carrera[carrera].append(asignacion)
+            cursos_por_carrera[carrera] += 1
+        # Contamos la cantidad de cursos continuos por ingenieria
+        print("Cursos por carrera: ", cursos_por_carrera)
+
+        def contar_continuos(asignaciones:List[Asignacion]):
+            bonus = 0
+            grupos = {}
+            for asignacion in asignaciones:
+                key = (asignacion.curso.carrera, asignacion.curso.semestre)
+                grupos.setdefault(key, []).append(asignacion.horario)
+
+            for horarios in grupos.values():
+                horarios_int = sorted([hora_a_min(h) for h in horarios])
+                consecutivos = sum(1 for i in range(1, len(horarios_int))
+                                if horarios_int[i] - horarios_int[i-1] == 50)
+                bonus += consecutivos
+            return bonus
+
+        def hora_a_min(hora):
+            h, m = map(int, hora.split(":"))
+            return h * 60 + m
+        
+        # Contamos la cantidad de cursos continuos por ingenieria
+        for carrera in cursos_por_carrera.keys():
+            if carrera not in continuos_por_carrera:
+                continuos_por_carrera[carrera] = 0
+            continuos_por_carrera[carrera] = contar_continuos(asignaciones_carrera[carrera])
+        
+        print("Cursos continuos por carrera: ", continuos_por_carrera)
+
+        ventana = Toplevel(self.root)
+        ventana.title("Porcentaje de Cursos Continuos por Carrera")
+        ventana.geometry("600x300")
+
+        tree = ttk.Treeview(ventana, columns=("carrera", "cursos", "continuos", "porcentaje"), show="headings")
+        tree.heading("carrera", text="Carrera")
+        tree.heading("cursos", text="Cursos")
+        tree.heading("continuos", text="Continuos")
+        tree.heading("porcentaje", text="% Continuos")
+
+        for carrera in cursos_por_carrera:
+            total = cursos_por_carrera[carrera]
+            continuos = continuos_por_carrera.get(carrera, 0)
+            porcentaje = (continuos / total) * 100 if total > 0 else 0
+            tree.insert("", "end", values=(carrera, total, continuos, f"{porcentaje:.2f}%"))
+
+        tree.pack(expand=True, fill="both", padx=10, pady=10)
+
 
     def graficar_aptitud(self, algoritmo_genetico:AlgoritmoGenetico):
         import matplotlib.pyplot as plt
