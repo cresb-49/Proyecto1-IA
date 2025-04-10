@@ -153,7 +153,7 @@ class AlgoritmoGenetico:
             self.mejor = self.poblacion[0]
             self.mejores_generaciones.append(self.mejor.copy())
             print(f"Gen {gen+1}, mejor aptitud: {self.mejor.aptitud}")
-            print(f"Gen {gen+1}, mejor horario: {len(self.mejor.asignaciones)}")
+            # print(f"Gen {gen+1}, mejor horario: {len(self.mejor.asignaciones)}")
             self.seleccionar_cruzar_mutar()
             
         # De los mejores horarios, seleccionamos el mejor es el que tiene
