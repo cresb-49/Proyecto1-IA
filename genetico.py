@@ -117,7 +117,7 @@ class AlgoritmoGenetico:
                     continue
                 horario = random.choice(horarios_validos)
                 asignaciones.append(Asignacion(curso, docente, salon, horario))
-            print(f"Se han generado {len(asignaciones)} asignaciones")
+            # print(f"Se han generado {len(asignaciones)} asignaciones")
             self.poblacion.append(Horario(asignaciones))
 
     def convertir_a_minutos(self, hora: str) -> int:
