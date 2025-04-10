@@ -153,9 +153,51 @@ class AlgoritmoGenetico:
                 codigos_cursos.append(asignacion.curso.codigo)
         
         return codigos_cursos
-     
+    
+    def eliminar_conflictos(self,codigos_cursos,asignaciones):
+        """
+        Elimina los conflictos de las asignaciones
+        :param codigos_cursos: lista de codigos de cursos con conflictos
+        :param asignaciones: lista de asignaciones
+        :return: lista de asignaciones sin conflictos
+        """
+        for asignacion in asignaciones:
+            if asignacion.curso.codigo in codigos_cursos:
+                # Si el curso tiene conflicto, lo eliminamos
+                asignaciones.remove(asignacion)
+        return asignaciones
+    
+    def cruzarFaltante(self,padre1:Horario,padre2:Horario) -> Horario:
+        """
+        Cruza dos horarios, el hijo es una mezcla de los dos padres
+        El resultado es un nuevo horario en este caso se tratan de eliminar conflictos
+        mediante el cruce CrossOver el cual se trata en completar los faltantes
+        :param padre1: Horario padre 1
+        :param padre2: Horario padre 2
+        :return: Horario hijo
+        """
+        # Rrealizamos una copia de padre1 para que sea base del hijo a generar
+        hijo = padre1.asignaciones.copy()    
+        # Recorremos los codigos de los cursos que tienen conflictos
+        codigos_cursos = self.cursos_conflicto(hijo)
+        hijo = self.eliminar_conflictos(codigos_cursos,hijo)
+        # Recorremos los codigos de los cursos que tienen conflictos
+        # Y buscamos en padre2 esos cursos para completar la asignacion
+        for asignacion in padre2.asignaciones:
+            if asignacion.curso.codigo in codigos_cursos:
+                # Realizamos un copia de la asignacion y la agregamos al hijo
+                asignacion_copia = Asignacion(asignacion.curso,asignacion.docente,asignacion.salon,asignacion.horario)
+                hijo.append(asignacion_copia)
+        #Retornamos el hijo con las asignaciones completas
+        return Horario(hijo)
+            
 
     def calcular_mapas(self,map_horario_salon,map_horario_docente,map_salon_docente,asignaciones):
+        """
+        Calcula los mapas de horarios, salones y docentes
+        :param asignaciones: lista de asignaciones
+        :return: None
+        """
         for asignacion in asignaciones:
             key_hs = (asignacion.horario, asignacion.salon.nombre)
             key_hd = (asignacion.horario, asignacion.docente.registro)
@@ -175,7 +217,15 @@ class AlgoritmoGenetico:
             else:
                 map_salon_docente[key_sd].append(asignacion)
 
-    def cruzar(self, padre1: Horario, padre2: Horario) -> Horario:
+    def cruzarRandom(self, padre1: Horario, padre2: Horario) -> Horario:
+        """
+        Cruza dos horarios aleatoriamente, el hijo es una mezcla de los dos padres
+        El resultado es un nuevo horario pero las asignaciones de cursos se pueden repetir
+        Por lo que es muy probable que el hijo tenga conflictos mas dificil de resolver
+        :param padre1: Horario padre 1
+        :param padre2: Horario padre 2
+        :return: Horario hijo
+        """
         punto_corte = random.randint(1, len(padre1.asignaciones) - 1)
         hijo_asigs = padre1.asignaciones[:punto_corte] + \
             padre2.asignaciones[punto_corte:]
@@ -193,7 +243,7 @@ class AlgoritmoGenetico:
             # del mejor al peor
             cantidad_padres = int(self.tamano_poblacion * 0.6)
             padres = random.sample(self.poblacion[:cantidad_padres], 2)
-            hijo = self.cruzar(padres[0], padres[1])
+            hijo = self.cruzarFaltante(padres[0], padres[1])
             self.mutar(hijo)
             nueva_poblacion.append(hijo)
 
