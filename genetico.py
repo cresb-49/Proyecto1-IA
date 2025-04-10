@@ -132,6 +132,49 @@ class AlgoritmoGenetico:
         self.mejores_generaciones.sort(key=lambda h: h.aptitud, reverse=True)
         self.mejor = self.mejores_generaciones[0]
 
+    def cursos_conflicto(self,asignaciones):
+        codigos_cursos = []
+        # De las asignaciones hay que tomar todas aquellas que tengas algun tipo de conflicto
+        map_horario_salon = {}
+        map_horario_docente = {}
+        map_salon_docente = {}
+
+        self.calcular_mapas(map_horario_salon,map_horario_docente,map_salon_docente,asignaciones)
+        for asignacion in asignaciones:
+            key_hs = (asignacion.horario, asignacion.salon.nombre)
+            key_hd = (asignacion.horario, asignacion.docente.registro)
+            key_sd = (asignacion.salon.nombre, asignacion.docente.registro)
+
+            es_conflicto1 = len(map_horario_salon[key_hs]) > 1
+            es_conflicto2 = len(map_horario_docente[key_hd]) > 1
+            es_conflicto3 = len(map_salon_docente[key_sd]) > 1
+
+            if es_conflicto1 or es_conflicto2 or es_conflicto3:
+                codigos_cursos.append(asignacion.curso.codigo)
+        
+        return codigos_cursos
+     
+
+    def calcular_mapas(self,map_horario_salon,map_horario_docente,map_salon_docente,asignaciones):
+        for asignacion in asignaciones:
+            key_hs = (asignacion.horario, asignacion.salon.nombre)
+            key_hd = (asignacion.horario, asignacion.docente.registro)
+            key_sd = (asignacion.salon.nombre, asignacion.docente.registro)
+            if key_hs not in map_horario_salon:
+                map_horario_salon[key_hs] = []
+            else:
+                map_horario_salon[key_hs].append(asignacion)
+
+            if key_hd not in map_horario_docente:
+                map_horario_docente[key_hd] = []
+            else:
+                map_horario_docente[key_hd].append(asignacion)
+
+            if key_sd not in map_salon_docente:
+                map_salon_docente[key_sd] = []
+            else:
+                map_salon_docente[key_sd].append(asignacion)
+
     def cruzar(self, padre1: Horario, padre2: Horario) -> Horario:
         punto_corte = random.randint(1, len(padre1.asignaciones) - 1)
         hijo_asigs = padre1.asignaciones[:punto_corte] + \
