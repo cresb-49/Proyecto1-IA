@@ -250,8 +250,13 @@ class AlgoritmoGenetico:
         self.poblacion = nueva_poblacion
 
     def mutar(self, individuo: Horario, tasa=0.1):
+
+        # Aplicamos una mutacion del 90%
         if random.random() > tasa:
             return
+        # Seleccionamos una asignacion aleatoria y cambiamos su horario
+        # Por uno que sea valido para el docente, no verificamos si
+        # hay conflictos en general
         asignacion = random.choice(individuo.asignaciones)
         docente = asignacion.docente
         horarios_validos = self.generar_horarios_validos(docente)
