@@ -6,7 +6,7 @@ from tkinter import Toplevel, ttk, messagebox
 from clases import Curso
 from carga import CargadorDatos
 import os
-from clases import Asignacion
+from clases import Asignacion,RelacionDocenteCurso, Docente, Salon
 from typing import List
 
 from exportador_excel import ExportadorExcel
@@ -20,10 +20,28 @@ class AppHorario:
         self.root.title("Seleccionar Cursos")
         self.root.geometry("1000x600")
 
-        self.cursos = CargadorDatos.cargar_cursos("data/cursos.csv")
+        self.cursos: List[Curso] = []
+        self.errores: List[str] = []
+        self.relaciones:RelacionDocenteCurso = None
+        self.docentes: List[Docente] = []
+        self.salones: List[Salon] = []
         self.check_vars = []
-
+        self.cargar_info()
         self.build_ui()
+
+    def cargar_info(self):
+        base_path = "data"
+        path_cursos = os.path.join(base_path, "cursos.csv")
+        path_docentes = os.path.join(base_path, "docentes.csv")
+        path_relaciones = os.path.join(base_path, "docente_curso.csv")
+        path_salones = os.path.join(base_path, "salones.csv")
+
+        self.cursos, errores0 = CargadorDatos.cargar_cursos(path_cursos)
+        self.docentes,errores1 = CargadorDatos.cargar_docentes(path_docentes)
+        self.relaciones,errores2 = CargadorDatos.cargar_relaciones(path_relaciones)
+        self.salones,errores3 = CargadorDatos.cargar_salones(path_salones)
+
+        self.errores = errores0 + errores1 + errores2 + errores3
 
     def build_ui(self):
         frame_top = tk.Frame(self.root)
@@ -37,11 +55,15 @@ class AppHorario:
                              command=lambda: self.seleccionar_todos(False))
         btn_generar = tk.Button(
             frame_top, text="Generar Horario", command=self.generar_horario)
+        
+        btn_mostrar_errores = tk.Button(
+            frame_top, text="Mostrar Errores", command=self.mostrar_errores_carga)
 
         btn_pares.pack(side=tk.LEFT, padx=5)
         btn_impares.pack(side=tk.LEFT, padx=5)
         btn_nada.pack(side=tk.LEFT, padx=5)
         btn_generar.pack(side=tk.LEFT, padx=5)
+        btn_mostrar_errores.pack(side=tk.LEFT, padx=5)
 
         self.canvas = tk.Canvas(self.root)
         self.scroll_y = ttk.Scrollbar(
@@ -89,6 +111,30 @@ class AppHorario:
                 row=i+1, column=5, sticky="nsew")
             tk.Label(self.scroll_frame, text=curso.tipo).grid(
                 row=i+1, column=6, sticky="nsew")
+        self.mostrar_errores_carga()
+    
+    def mostrar_errores_carga(self):
+        # Mostrar errores
+        # Si hay algun error, se muestra en un popup con scrollbar
+        if len(self.errores) > 0:
+            popup = Toplevel(self.root)
+            popup.title("Errores")
+            popup.geometry("400x300")
+
+            scrollbar = ttk.Scrollbar(popup)
+            scrollbar.pack(side="right", fill="y")
+
+            text_area = tk.Text(popup, wrap="word", yscrollcommand=scrollbar.set)
+            text_area.pack(expand=True, fill="both")
+            scrollbar.config(command=text_area.yview)
+
+            for error in self.errores:
+                text_area.insert(tk.END, error + "\n")
+        else:
+            popup = Toplevel(self.root)
+            popup.title("Carga exitosa")
+            popup.geometry("300x100")
+            messagebox.showinfo("Carga exitosa", "No se encontraron errores en la carga de datos.")
 
     def seleccionar_todos(self, estado):
         for var, _ in self.check_vars:
@@ -112,20 +158,11 @@ class AppHorario:
         self.ejecutar_algoritmo_genetico(seleccionados)
 
     def ejecutar_algoritmo_genetico(self, cursos_seleccionados):
-        base_path = "data"
-        path_docentes = os.path.join(base_path, "docentes.csv")
-        path_relaciones = os.path.join(base_path, "docente_curso.csv")
-        path_salones = os.path.join(base_path, "salones.csv")
-
-        docentes = CargadorDatos.cargar_docentes(path_docentes)
-        relaciones = CargadorDatos.cargar_relaciones(path_relaciones)
-        salones = CargadorDatos.cargar_salones(path_salones)
-
         cursos_validos_seleccionados = []
         cursos_no_validos_seleccionados = []
 
         for curso in cursos_seleccionados:
-            posibles_docentes = relaciones.docentes_para(curso.codigo)
+            posibles_docentes = self.relaciones.docentes_para(curso.codigo)
             if posibles_docentes:
                 cursos_validos_seleccionados.append(curso)
             else:
@@ -135,9 +172,9 @@ class AppHorario:
 
         ag = AlgoritmoGenetico(
             cursos=cursos_validos_seleccionados,
-            docentes=docentes,
-            salones=salones,
-            relaciones=relaciones,
+            docentes=self.docentes,
+            salones=self.salones,
+            relaciones=self.relaciones,
             generaciones=50,
             poblacion_inicial=100
         )
@@ -158,7 +195,7 @@ class AppHorario:
         ExportadorPDF.exportar_horario(ag.mejor.asignaciones)
         messagebox.showinfo(
             "Éxito", "Horario generado y exportado exitosamente, con una funcion de aptitud de: " + str(ag.mejor.aptitud))
-        self.mostrar_vista_edicion(ag.mejor.asignaciones, salones,ag)
+        self.mostrar_vista_edicion(ag.mejor.asignaciones, self.salones,ag)
 
     def calcular_mapas(self, map_horario_salon, map_horario_docente, map_salon_docente, asignaciones):
         for asignacion in asignaciones:
