@@ -46,7 +46,7 @@ class Horario:
             # Conflictos por cursos obligatorios traslapados
             if asignacion.curso.tipo == "obligatorio":
                 if key_c in cursos_semestre:
-                    conflictos += 1
+                    conflictos += 1.5
                 else:
                     cursos_semestre[key_c] = True
 
