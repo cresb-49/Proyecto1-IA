@@ -113,6 +113,10 @@ class AppHorario:
                 row=i+1, column=6, sticky="nsew")
         self.mostrar_errores_carga()
     
+    def hora_a_min(self,hora):
+        h, m = map(int, hora.split(":"))
+        return h * 60 + m
+
     def mostrar_errores_carga(self):
         # Mostrar errores
         # Si hay algun error, se muestra en un popup con scrollbar
@@ -151,13 +155,37 @@ class AppHorario:
     def generar_horario(self):
         seleccionados = [curso for var, curso in self.check_vars if var.get()]
         if not seleccionados:
-            messagebox.showwarning(
-                "Aviso", "Selecciona al menos un curso para continuar.")
+            messagebox.showwarning("Aviso", "Selecciona al menos un curso para continuar.")
             return
-        print(f"Se han seleccionado {len(seleccionados)} cursos.")
-        self.ejecutar_algoritmo_genetico(seleccionados)
 
-    def ejecutar_algoritmo_genetico(self, cursos_seleccionados):
+        def continuar():
+            try:
+                generaciones = int(entry_generaciones.get())
+                poblacion = int(entry_poblacion.get())
+                top.destroy()
+                print(f"Se han seleccionado {len(seleccionados)} cursos.")
+                self.ejecutar_algoritmo_genetico(seleccionados, generaciones, poblacion)
+            except ValueError:
+                messagebox.showerror("Error", "Los valores deben ser números enteros.")
+
+        top = Toplevel(self.root)
+        top.title("Parámetros del Algoritmo Genético")
+        top.geometry("300x200")
+        top.resizable(False, False)
+
+        tk.Label(top, text="Cantidad de generaciones:").pack(pady=5)
+        entry_generaciones = tk.Entry(top)
+        entry_generaciones.insert(0, "50")  # valor por defecto
+        entry_generaciones.pack()
+
+        tk.Label(top, text="Tamaño de la población inicial:").pack(pady=5)
+        entry_poblacion = tk.Entry(top)
+        entry_poblacion.insert(0, "100")  # valor por defecto
+        entry_poblacion.pack()
+
+        tk.Button(top, text="Generar", command=continuar).pack(pady=10)
+
+    def ejecutar_algoritmo_genetico(self, cursos_seleccionados,generaciones=50,poblacion=100):
         cursos_validos_seleccionados = []
         cursos_no_validos_seleccionados = []
 
@@ -175,8 +203,8 @@ class AppHorario:
             docentes=self.docentes,
             salones=self.salones,
             relaciones=self.relaciones,
-            generaciones=50,
-            poblacion_inicial=100
+            generaciones=generaciones,
+            poblacion_inicial=poblacion
         )
 
         inicio = time.time()
@@ -195,29 +223,33 @@ class AppHorario:
         ExportadorPDF.exportar_horario(ag.mejor.asignaciones)
         messagebox.showinfo(
             "Éxito", "Horario generado y exportado exitosamente, con una funcion de aptitud de: " + str(ag.mejor.aptitud))
-        self.mostrar_vista_edicion(ag.mejor.asignaciones, self.salones,ag)
+        self.mostrar_vista_edicion(self.salones,ag)
 
-    def calcular_mapas(self, map_horario_salon, map_horario_docente, map_salon_docente, asignaciones):
+    def calcular_mapas(self, map_horario_salon, map_horario_docente, map_salon_docente, map_curso_semestre, asignaciones:List[Asignacion]):
         for asignacion in asignaciones:
             key_hs = (asignacion.horario, asignacion.salon.nombre)
             key_hd = (asignacion.horario, asignacion.docente.registro)
-            key_sd = (asignacion.salon.nombre, asignacion.docente.registro)
+            key_sd = (asignacion.salon.nombre, asignacion.docente.registro,asignacion.horario)
+            key_traspale_csh= (asignacion.curso.carrera,asignacion.curso.semestre,asignacion.horario)
+
             if key_hs not in map_horario_salon:
                 map_horario_salon[key_hs] = []
-            else:
-                map_horario_salon[key_hs].append(asignacion)
+            map_horario_salon[key_hs].append(asignacion)
 
             if key_hd not in map_horario_docente:
                 map_horario_docente[key_hd] = []
-            else:
-                map_horario_docente[key_hd].append(asignacion)
+            map_horario_docente[key_hd].append(asignacion)
 
             if key_sd not in map_salon_docente:
                 map_salon_docente[key_sd] = []
-            else:
-                map_salon_docente[key_sd].append(asignacion)
+            map_salon_docente[key_sd].append(asignacion)
 
-    def mostrar_vista_edicion(self, asignaciones:List[Asignacion], salones,algoritmo_genetico:AlgoritmoGenetico):
+            if asignacion.curso.tipo == "obligatorio":
+                if key_traspale_csh not in map_curso_semestre:
+                    map_curso_semestre[key_traspale_csh] = []
+                map_curso_semestre[key_traspale_csh].append(asignacion)
+
+    def mostrar_vista_edicion(self, salones,algoritmo_genetico:AlgoritmoGenetico):
         ventana = Toplevel()
         ventana.title("Editar Asignaciones")
         ventana.geometry("1000x500")
@@ -229,6 +261,17 @@ class AppHorario:
         tree.heading("horario", text="Horario")
         tree.heading("salon", text="Salón")
 
+
+        asignaciones:List[Asignacion] = algoritmo_genetico.mejor.asignaciones
+        # Creamos una lista donde el contenido son la hora de la asignacion en minutos
+        comodin_ordenar = []
+        for asignacion in asignaciones:
+            comodin_ordenar.append((self.hora_a_min(asignacion.horario),asignacion))
+        # Ordenamos las asignaciones por horario
+        comodin_ordenar.sort(key=lambda x: x[0])
+        # Desempacamos la lista de asignaciones
+        asignaciones = [asignacion for _,asignacion in comodin_ordenar]
+
         # Como la asignacion resultante puede tener coliciones de 3 formas:
         # 1. Horario y salon ocupados por otra asignacion
         # 2. Hora y Catedratico ocupados por otra asignacion
@@ -238,47 +281,32 @@ class AppHorario:
         map_horario_salon = {}
         map_horario_docente = {}
         map_salon_docente = {}
+        map_curso_semestre = {}
 
         # Tag para marcar la filas con errores
         # Diferentes colores para cada tipo de conflicto
-        # 1. Horario y salon color: lightcoral -> El horario y salon ocupados por otra asignacion
-        # 2. Horario y docente color: lightblue -> El horario y docente ocupados por otra asignacion
-        # 3. Salon y docente color: lightgreen -> El salon y docente ocupados por otra asignacion
-        tree.tag_configure('horario_salon', background='lightblue')
-        tree.tag_configure('horario_docente', background='lightgreen')
-        tree.tag_configure('salon_docente', background='lightcoral')
-
-        # for asignacion in asignaciones:
-        #     key_hs = (asignacion.horario, asignacion.salon.nombre)
-        #     key_hd = (asignacion.horario, asignacion.docente.registro)
-        #     key_sd = (asignacion.salon.nombre, asignacion.docente.registro)
-        #     if key_hs not in map_horario_salon:
-        #         map_horario_salon[key_hs] = []
-        #     else:
-        #         map_horario_salon[key_hs].append(asignacion)
-
-        #     if key_hd not in map_horario_docente:
-        #         map_horario_docente[key_hd] = []
-        #     else:
-        #         map_horario_docente[key_hd].append(asignacion)
-
-        #     if key_sd not in map_salon_docente:
-        #         map_salon_docente[key_sd] = []
-        #     else:
-        #         map_salon_docente[key_sd].append(asignacion)
+        # 1. Horario y salon color: red -> El horario y salon ocupados por otra asignacion
+        # 2. Horario y docente color: orange -> El horario y docente ocupados por otra asignacion
+        # 3. Salon y docente color: green -> El salon y docente ocupados por otra asignacion
+        # 4. Curso obligatorio traslapado color: purple -> El curso obligatorio traslapado por otro curso obligatorio
+        tree.tag_configure('horario_salon', background='orange')
+        tree.tag_configure('horario_docente', background='green')
+        tree.tag_configure('salon_docente', background='red')
+        tree.tag_configure('curso_obligatorio_traspale', background='purple')
 
         # Calcular los mapas de asignaciones
         self.calcular_mapas(
-            map_horario_salon, map_horario_docente, map_salon_docente, asignaciones)
-
+            map_horario_salon, map_horario_docente, map_salon_docente,map_curso_semestre, asignaciones)
         for asignacion in asignaciones:
             key_hs = (asignacion.horario, asignacion.salon.nombre)
             key_hd = (asignacion.horario, asignacion.docente.registro)
-            key_sd = (asignacion.salon.nombre, asignacion.docente.registro)
+            key_sd = (asignacion.salon.nombre, asignacion.docente.registro,asignacion.horario)
+            key_traspale_csh= (asignacion.curso.carrera,asignacion.curso.semestre,asignacion.horario)
 
             es_conflicto1 = len(map_horario_salon[key_hs]) > 1
             es_conflicto2 = len(map_horario_docente[key_hd]) > 1
             es_conflicto3 = len(map_salon_docente[key_sd]) > 1
+            es_conflicto4 = len(map_curso_semestre.get(key_traspale_csh, [])) > 1
 
             tag_asociado = None
             if es_conflicto1:
@@ -287,6 +315,8 @@ class AppHorario:
                 tag_asociado = 'horario_docente'
             elif es_conflicto3:
                 tag_asociado = 'salon_docente'
+            elif es_conflicto4:
+                tag_asociado = 'curso_obligatorio_traspale'
 
             tree.insert(
                 "", "end",
@@ -302,16 +332,23 @@ class AppHorario:
         tree.pack(expand=True, fill="both")
 
         leyenda_frame = tk.Frame(ventana)
-        leyenda_frame.pack(pady=5)
+        leyenda_frame.pack(pady=5, anchor="center")
 
-        tk.Label(leyenda_frame, text="Leyenda:").grid(
-            row=0, column=0, sticky="w")
+        tk.Label(leyenda_frame, text="Leyenda:", font=("Arial", 10, "bold")).grid(
+            row=0, column=0, columnspan=2, pady=(0, 5)
+        )
+
+        # Primera fila de etiquetas
         tk.Label(leyenda_frame, text="Horario y docente en conflicto",
-                 bg="lightgreen", width=30).grid(row=1, column=0, padx=5, pady=2)
+                bg="green", fg="white", width=30).grid(row=1, column=0, padx=10, pady=2)
         tk.Label(leyenda_frame, text="Horario y salón en conflicto",
-                 bg="lightblue", width=30).grid(row=1, column=1, padx=5, pady=2)
+                bg="orange", fg="white", width=30).grid(row=1, column=1, padx=10, pady=2)
+
+        # Segunda fila de etiquetas
         tk.Label(leyenda_frame, text="Salón y docente en conflicto",
-                 bg="lightcoral", width=30).grid(row=1, column=2, padx=5, pady=2)
+                bg="red", fg="black", width=30).grid(row=2, column=0, padx=10, pady=2)
+        tk.Label(leyenda_frame, text="Curso obligatorio traslapado",
+                bg="purple", fg="white", width=30).grid(row=2, column=1, padx=10, pady=2)
         
         # Información del algoritmo
         resultados_frame = tk.Frame(ventana)
@@ -338,7 +375,7 @@ class AppHorario:
 
             current_key_hs = (asignacion.horario, asignacion.salon.nombre)
             current_key_hd = (asignacion.horario, asignacion.docente.registro)
-            current_key_sd = (asignacion.salon.nombre, asignacion.docente.registro)
+            current_key_sd = (asignacion.salon.nombre, asignacion.docente.registro,asignacion.horario)
 
             popup = Toplevel(ventana)
             popup.title("Editar Asignación")
@@ -410,21 +447,25 @@ class AppHorario:
                     map_horario_salon.clear()
                     map_horario_docente.clear()
                     map_salon_docente.clear()
+                    map_curso_semestre.clear()
 
                     self.calcular_mapas(
-                        map_horario_salon, map_horario_docente, map_salon_docente, asignaciones)
+                        map_horario_salon, map_horario_docente, map_salon_docente,map_curso_semestre, asignaciones)
 
                     for item in tree.get_children():
                         tree.delete(item)
                     conflictos_despues_cambio = 0
+
                     for a in asignaciones:
                         key_hs = (a.horario, a.salon.nombre)
                         key_hd = (a.horario, a.docente.registro)
-                        key_sd = (a.salon.nombre, a.docente.registro)
+                        key_sd = (a.salon.nombre, a.docente.registro,a.horario)
+                        key_traspale_csh= (asignacion.curso.carrera,asignacion.curso.semestre,asignacion.horario)
 
                         es_conflicto1 = len(map_horario_salon[key_hs]) > 1
                         es_conflicto2 = len(map_horario_docente[key_hd]) > 1
                         es_conflicto3 = len(map_salon_docente[key_sd]) > 1
+                        es_conflicto4 = len(map_curso_semestre.get(key_traspale_csh, [])) > 1
 
                         tag_asociado = None
                         if es_conflicto1:
@@ -436,6 +477,9 @@ class AppHorario:
                         elif es_conflicto3:
                             conflictos_despues_cambio += 1
                             tag_asociado = 'salon_docente'
+                        elif es_conflicto4:
+                            conflictos_despues_cambio += 1
+                            tag_asociado = 'curso_obligatorio_traspale'
 
                         tree.insert(
                             "", "end",
@@ -512,15 +556,11 @@ class AppHorario:
                 grupos.setdefault(key, []).append(asignacion.horario)
 
             for horarios in grupos.values():
-                horarios_int = sorted([hora_a_min(h) for h in horarios])
+                horarios_int = sorted([self.hora_a_min(h) for h in horarios])
                 consecutivos = sum(1 for i in range(1, len(horarios_int))
                                 if horarios_int[i] - horarios_int[i-1] == 50)
                 bonus += consecutivos
             return bonus
-
-        def hora_a_min(hora):
-            h, m = map(int, hora.split(":"))
-            return h * 60 + m
         
         # Contamos la cantidad de cursos continuos por ingenieria
         for carrera in cursos_por_carrera.keys():

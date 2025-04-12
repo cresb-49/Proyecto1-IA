@@ -16,7 +16,7 @@ class Horario:
         bonus = self.contar_bonus()
         self.cantidad_conflictos = conflictos
         self.cantidad_bonus = bonus
-        self.aptitud = bonus - conflictos
+        self.aptitud = len(self.asignaciones) + (bonus*0.25) - (conflictos*1.5)
         return self.aptitud
 
     def contar_conflictos(self):
@@ -255,18 +255,15 @@ class AlgoritmoGenetico:
             key_sd = (asignacion.salon.nombre, asignacion.docente.registro)
             if key_hs not in map_horario_salon:
                 map_horario_salon[key_hs] = []
-            else:
-                map_horario_salon[key_hs].append(asignacion)
+            map_horario_salon[key_hs].append(asignacion)
 
             if key_hd not in map_horario_docente:
                 map_horario_docente[key_hd] = []
-            else:
-                map_horario_docente[key_hd].append(asignacion)
+            map_horario_docente[key_hd].append(asignacion)
 
             if key_sd not in map_salon_docente:
                 map_salon_docente[key_sd] = []
-            else:
-                map_salon_docente[key_sd].append(asignacion)
+            map_salon_docente[key_sd].append(asignacion)
 
     def cruzarRandom(self, padre1: Horario, padre2: Horario) -> Horario:
         """
