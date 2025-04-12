@@ -376,7 +376,7 @@ class AppHorario:
             def validar_y_aplicar():
                 nuevo_horario = combo_horario.get()
                 nuevo_salon = combo_salon.get()
-
+                conflictos_despues_cambio = None
                 try:
                     new_key = (nuevo_horario, nuevo_salon)
                     # Verificar si el nuevo horario y salón ya están ocupados
@@ -385,11 +385,15 @@ class AppHorario:
                             "El horario y salón ya están ocupados por otra asignación")
                     # Verificar si el nuevo horario y docente ya están ocupados
                     new_key_hd = (nuevo_horario, asignacion.docente.registro)
+                    print(f"new_key_hd: {new_key_hd}")
+                    print(f"current_key_hd: {current_key_hd}")
                     if new_key_hd in map_horario_docente and new_key_hd != current_key_hd:
                         raise ValueError(
                             "El horario y docente ya están ocupados por otra asignación")
                     # Verificar si el nuevo salón y docente ya están ocupados
                     new_key_sd = (nuevo_salon, asignacion.docente.registro)
+                    print(f"new_key_sd: {new_key_sd}")
+                    print(f"current_key_sd: {current_key_sd}")
                     if new_key_sd in map_salon_docente and new_key_sd != current_key_sd:
                         raise ValueError(
                             "El salón y docente ya están ocupados por otra asignación")
@@ -412,7 +416,7 @@ class AppHorario:
 
                     for item in tree.get_children():
                         tree.delete(item)
-
+                    conflictos_despues_cambio = 0
                     for a in asignaciones:
                         key_hs = (a.horario, a.salon.nombre)
                         key_hd = (a.horario, a.docente.registro)
@@ -424,10 +428,13 @@ class AppHorario:
 
                         tag_asociado = None
                         if es_conflicto1:
+                            conflictos_despues_cambio += 1
                             tag_asociado = 'horario_salon'
                         elif es_conflicto2:
+                            conflictos_despues_cambio += 1
                             tag_asociado = 'horario_docente'
                         elif es_conflicto3:
+                            conflictos_despues_cambio += 1
                             tag_asociado = 'salon_docente'
 
                         tree.insert(
@@ -446,6 +453,9 @@ class AppHorario:
                     # Lanzar traza para depuración
                     import traceback
                     traceback.print_exc()
+                if conflictos_despues_cambio == 0:
+                    messagebox.showinfo(
+                        "Éxito", "El horario ya no tiene conflictos 🥳")
 
             tk.Button(popup, text="Aplicar", command=validar_y_aplicar).grid(
                 row=2, columnspan=2, pady=10)
