@@ -1,4 +1,4 @@
-# Proyecto: Generador de Horarios con Algoritmos Genéticos
+# Generador de Horarios con Algoritmos Genéticos
 
 Este proyecto consiste en un sistema desarrollado en Python para generar horarios académicos optimizados, utilizando algoritmos genéticos como técnica de resolución. El sistema considera restricciones reales como disponibilidad de docentes, cantidad de salones y la distribución por semestres, generando propuestas automáticas de asignaciones que pueden ser evaluadas, editadas y exportadas por el usuario.
 
