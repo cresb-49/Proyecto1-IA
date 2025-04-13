@@ -1,16 +1,19 @@
+from typing import List
 from jinja2 import Template
 from pdfkit.api import configuration
 import pdfkit
 import platform
 
+from clases import Asignacion, Salon
+
 class ExportadorPDF:
     @staticmethod
-    def exportar_horario(asignaciones, nombre_pdf="horario_generado"):
+    def exportar_horario(asignaciones:List[Asignacion],salones:List[Salon], nombre_pdf="horario_generado"):
         horarios = ["13:40", "14:30", "15:20", "16:10",
                     "17:00", "17:50", "18:40", "19:30", "20:20"]
-        salones = list({a.salon.nombre for a in asignaciones})
+        nombres_salones = sorted({s.nombre for s in salones})
 
-        tabla = {hora: {s: "" for s in salones} for hora in horarios}
+        tabla = {hora: {s: "" for s in nombres_salones} for hora in horarios}
         for a in asignaciones:
             content = f"{a.curso.nombre}<br>{a.curso.codigo}<br>{a.docente.nombre}<br>Semetre: {a.curso.semestre}<br>{a.curso.carrera}"
             tabla[a.horario][a.salon.nombre] = content
@@ -76,7 +79,7 @@ class ExportadorPDF:
         </html>
         """)
 
-        html = template.render(horarios=horarios, salones=salones, tabla=tabla)
+        html = template.render(horarios=horarios, salones=nombres_salones, tabla=tabla)
 
         with open("horario_generado.html", "w", encoding="utf-8") as f:
             f.write(html)

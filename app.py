@@ -219,8 +219,8 @@ class AppHorario:
         ag.pico_ram = f"{peak / 1024:.2f} KB"
 
         # Exportar el horario generado
-        ExportadorExcel.exportar_horario(ag.mejor.asignaciones)
-        ExportadorPDF.exportar_horario(ag.mejor.asignaciones)
+        ExportadorExcel.exportar_horario(ag.mejor.asignaciones,self.salones)
+        ExportadorPDF.exportar_horario(ag.mejor.asignaciones,self.salones)
         messagebox.showinfo(
             "Éxito", "Horario generado y exportado exitosamente, con una funcion de aptitud de: " + str(ag.mejor.aptitud))
         self.mostrar_vista_edicion(self.salones,ag)

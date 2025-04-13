@@ -1,11 +1,14 @@
+from typing import List
 import pandas as pd
+
+from clases import Asignacion, Salon
 
 class ExportadorExcel:
     @staticmethod
-    def exportar_horario(asignaciones, nombre_archivo="horario_generado.xlsx"):
+    def exportar_horario(asignaciones:List[Asignacion],salones:List[Salon], nombre_archivo="horario_generado.xlsx"):
         # Horarios posibles
         horarios = ["13:40", "14:30", "15:20", "16:10", "17:00", "17:50", "18:40", "19:30", "20:20"]
-        salones = list({a.salon.nombre for a in asignaciones})
+        salones = sorted({s.nombre for s in salones})
 
         # Crear DataFrame vacío
         tabla = pd.DataFrame(index=horarios, columns=salones)
